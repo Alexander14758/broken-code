@@ -196,13 +196,7 @@ export default function MultiChainChecker() {
       }}
     >
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
-        <h2 style={{ 
-          color: "#fff",
-          fontSize: "2rem",
-          fontWeight: "700",
-          marginBottom: "1rem",
-          textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
-        }}>🔎 Multi-Chain Wallet Analyzer</h2>
+        
 
         <p style={{ 
           marginTop: "10px",
@@ -256,7 +250,7 @@ export default function MultiChainChecker() {
             }} />
           )}
           <span style={{ position: "relative", zIndex: 1 }}>
-            {loading ? "🔄 Scanning..." : "🚀 Scan Wallet"}
+            {loading ? "🔄 Scanning..." : "Scan Wallet"}
           </span>
         </button>
 
@@ -265,6 +259,10 @@ export default function MultiChainChecker() {
             @keyframes scan {
               0% { left: -100%; }
               100% { left: 100%; }
+            }
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
             }
           `}
         </style>
@@ -364,9 +362,23 @@ export default function MultiChainChecker() {
                     📊 Tx Count: {r?.txCount ?? 0} (counted: {r?.cappedTx ?? 0}
                     /{PER_CHAIN_TX_CAP})
                   </div>
-                  <div style={{ color: "#06b6d4", fontSize: "14px", fontWeight: "600" }}>
-                    🏅 Points: {r?.points ?? 0}
-                  </div>
+                  <div style={{ color: "#06b6d4", fontSize: "14px", fontWeight: "600", display: "flex", alignItems: "center", gap: "8px" }}>
+                  {loading && !r ? (
+                    <>
+                      <div style={{
+                        width: "12px",
+                        height: "12px",
+                        border: "1.5px solid rgba(6, 182, 212, 0.3)",
+                        borderTop: "1.5px solid #06b6d4",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite"
+                      }} />
+                      Loading...
+                    </>
+                  ) : (
+                    <>🏅 Points: {r?.points ?? 0}</>
+                  )}
+                </div>
                 </div>
               </div>
             );
@@ -488,4 +500,3 @@ export default function MultiChainChecker() {
     </div>
   );
 }
-

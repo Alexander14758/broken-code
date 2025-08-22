@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppKitProvider } from "../Appkitprovider";
 import { useAppKitAccount } from "@reown/appkit/react";
-import ApproveButton from "../components/Approvewallet"; 
+import ApproveButton from "../components/Approvewallet";
 import Bnbcode from "../components/Cryptolist";
 import "./home.css";
 
@@ -15,7 +14,7 @@ function WalletHeader() {
     <div className="wallet-header">
       <div className="header-background"></div>
       <div className="header-content">
-        <button 
+        <button
           className="back-button glass"
           onClick={() => navigate('/')}
         >
@@ -24,7 +23,7 @@ function WalletHeader() {
           </svg>
           Back to Home
         </button>
-        
+
         <div className="logo-section">
           <img src="/ShardsLogo.jpg" alt="Shards Protocol" className="header-logo" />
           <h1 className="header-title gradient-text">Shards Protocol Dashboard</h1>
@@ -58,7 +57,7 @@ export default function Home() {
     <AppKitProvider>
       <div className="wallet-dashboard">
         <WalletHeader />
-        
+
         <main className="dashboard-main">
           <div className="dashboard-container">
             <div className="dashboard-grid">
@@ -85,8 +84,8 @@ export default function Home() {
 
             <div className="stats-section glass-card">
               <div className="section-header">
-                <h2 className="section-title gradient-text">Your Web3 Journey</h2>
-                <p className="section-subtitle">Track your progress and achievements</p>
+                <h2 className="section-title gradient-text">Wallet Stats</h2>
+                <p className="section-subtitle">Your on-chain performance overview</p>
               </div>
               <div className="stats-grid">
                 <div className="stat-card">
