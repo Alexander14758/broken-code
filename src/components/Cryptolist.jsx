@@ -196,9 +196,20 @@ export default function MultiChainChecker() {
       }}
     >
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
-        <h2>🔎 Multi-Chain Wallet Analyzer</h2>
+        <h2 style={{ 
+          color: "#fff",
+          fontSize: "2rem",
+          fontWeight: "700",
+          marginBottom: "1rem",
+          textShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
+        }}>🔎 Multi-Chain Wallet Analyzer</h2>
 
-        <p style={{ marginTop: "10px" }}>
+        <p style={{ 
+          marginTop: "10px",
+          color: isConnected ? "#10b981" : "#ef4444",
+          fontSize: "1.1rem",
+          fontWeight: "500"
+        }}>
           {isConnected ? `🔗 Connected: ${address}` : "❌ Wallet not connected"}
         </p>
 
@@ -206,19 +217,57 @@ export default function MultiChainChecker() {
           onClick={checkAllChains}
           disabled={!isConnected || loading}
           style={{
-            marginTop: "15px",
-            padding: "10px 20px",
-            fontSize: "16px",
-            borderRadius: "8px",
+            marginTop: "25px",
+            padding: "15px 30px",
+            fontSize: "18px",
+            borderRadius: "15px",
             border: "none",
-            background: "#4caf50",
+            background: loading 
+              ? "linear-gradient(45deg, #3b82f6, #8b5cf6)" 
+              : isConnected 
+                ? "linear-gradient(45deg, #10b981, #06b6d4)" 
+                : "linear-gradient(45deg, #64748b, #475569)",
             color: "#fff",
-            cursor: isConnected ? "pointer" : "not-allowed",
-            width: "220px",
+            cursor: isConnected && !loading ? "pointer" : "not-allowed",
+            width: "250px",
+            fontWeight: "600",
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            transition: "all 0.3s ease",
+            transform: loading ? "scale(0.98)" : "scale(1)",
+            boxShadow: loading 
+              ? "0 0 30px rgba(59, 130, 246, 0.5)" 
+              : isConnected 
+                ? "0 8px 25px rgba(16, 185, 129, 0.3)" 
+                : "0 4px 15px rgba(100, 116, 139, 0.2)",
+            position: "relative",
+            overflow: "hidden"
           }}
         >
-          {loading ? "Scanning..." : "Scan Wallet"}
+          {loading && (
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: "-100%",
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+              animation: "scan 1.5s infinite"
+            }} />
+          )}
+          <span style={{ position: "relative", zIndex: 1 }}>
+            {loading ? "🔄 Scanning..." : "🚀 Scan Wallet"}
+          </span>
         </button>
+
+        <style>
+          {`
+            @keyframes scan {
+              0% { left: -100%; }
+              100% { left: 100%; }
+            }
+          `}
+        </style>
 
         {/* Results */}
         <div style={{ marginTop: "22px", textAlign: "left" }}>
@@ -228,18 +277,43 @@ export default function MultiChainChecker() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "12px",
-                marginTop: "12px",
-                padding: "10px 12px",
-                borderRadius: "10px",
-                border: "1px solid #eee",
+                gap: "15px",
+                marginTop: "15px",
+                padding: "15px 18px",
+                borderRadius: "15px",
+                background: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                backdropFilter: "blur(10px)",
+                transition: "all 0.3s ease",
+                cursor: "pointer"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 8px 25px rgba(255, 255, 255, 0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "none";
               }}
             >
-              <img src={usdtlogo} alt="USDT" style={roundLogoStyle} />
+              <img src={usdtlogo} alt="USDT" style={{
+                ...roundLogoStyle,
+                border: "2px solid rgba(34, 197, 94, 0.5)",
+                boxShadow: "0 0 15px rgba(34, 197, 94, 0.3)"
+              }} />
               <div>
-                <div style={{ fontWeight: 600 }}>USDT</div>
-                <div>💵 Balance: {results["USDT"].balance} USDT</div>
-                <div>🏅 Points: {results["USDT"].points}</div>
+                <div style={{ 
+                  fontWeight: 700, 
+                  color: "#22c55e",
+                  fontSize: "1.1rem",
+                  marginBottom: "4px"
+                }}>USDT</div>
+                <div style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "14px" }}>
+                  💵 Balance: {results["USDT"].balance} USDT
+                </div>
+                <div style={{ color: "#06b6d4", fontSize: "14px", fontWeight: "600" }}>
+                  🏅 Points: {results["USDT"].points}
+                </div>
               </div>
             </div>
           )}
@@ -253,21 +327,46 @@ export default function MultiChainChecker() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
-                  marginTop: "12px",
-                  padding: "10px 12px",
-                  borderRadius: "10px",
-                  border: "1px solid #eee",
+                  gap: "15px",
+                  marginTop: "15px",
+                  padding: "15px 18px",
+                  borderRadius: "15px",
+                  background: "rgba(255, 255, 255, 0.06)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  backdropFilter: "blur(10px)",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer"
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 8px 25px rgba(59, 130, 246, 0.15)";
+                  e.target.style.borderColor = "rgba(59, 130, 246, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "none";
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.15)";
                 }}
               >
-                <img src={chain.logo} alt={chain.name} style={roundLogoStyle} />
+                <img src={chain.logo} alt={chain.name} style={{
+                  ...roundLogoStyle,
+                  border: "2px solid rgba(59, 130, 246, 0.3)",
+                  boxShadow: "0 0 10px rgba(59, 130, 246, 0.2)"
+                }} />
                 <div>
-                  <div style={{ fontWeight: 600 }}>{chain.name}</div>
-                  <div>
+                  <div style={{ 
+                    fontWeight: 700, 
+                    color: "#3b82f6",
+                    fontSize: "1.1rem",
+                    marginBottom: "4px"
+                  }}>{chain.name}</div>
+                  <div style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "14px" }}>
                     📊 Tx Count: {r?.txCount ?? 0} (counted: {r?.cappedTx ?? 0}
                     /{PER_CHAIN_TX_CAP})
                   </div>
-                  <div>🏅 Points: {r?.points ?? 0}</div>
+                  <div style={{ color: "#06b6d4", fontSize: "14px", fontWeight: "600" }}>
+                    🏅 Points: {r?.points ?? 0}
+                  </div>
                 </div>
               </div>
             );
@@ -276,52 +375,114 @@ export default function MultiChainChecker() {
         <div
           style={{
             marginTop: "25px",
-            padding: "12px 16px",
-            borderRadius: "10px",
-            background: "#f6f7f9",
+            padding: "20px",
+            borderRadius: "20px",
+            background: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)",
+            border: "1px solid rgba(16, 185, 129, 0.3)",
             textAlign: "left",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(16, 185, 129, 0.2)"
           }}
         >
-          <h3 style={{ margin: 0 }}>
+          <h3 style={{ 
+            margin: 0,
+            color: "#10b981",
+            fontSize: "1.5rem",
+            fontWeight: "700",
+            textShadow: "0 0 10px rgba(16, 185, 129, 0.3)"
+          }}>
             🏆 Total Reward: {agg.totalPoints} Points
           </h3>
-          <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#555" }}> •••Breakdown••• <br />
-           • Base Reward: {agg.base} <br />• Wallet Age Bonus: {agg.ageBonus} <br /> • Hold USDT
-            Bonus: {agg.usdtPoints} <br />• Total Transations Done Across All Chains: {agg.perChainPointsSum}
+          <p style={{ 
+            margin: "12px 0 0 0", 
+            fontSize: "15px", 
+            color: "rgba(255, 255, 255, 0.9)",
+            lineHeight: "1.6"
+          }}>
+            <span style={{ 
+              color: "#06b6d4", 
+              fontWeight: "600",
+              fontSize: "16px"
+            }}>•••Breakdown•••</span> <br />
+            • Base Reward: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.base}</span> <br />
+            • Wallet Age Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.ageBonus}</span> <br />
+            • Hold USDT Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.usdtPoints}</span> <br />
+            • Total Transactions Done Across All Chains: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.perChainPointsSum}</span>
           </p>
         </div>
 
         {/* 🍰 CAKE REWARD (right under points) */}
         <div
           style={{
-            marginTop: "12px",
-            padding: "12px 16px",
-            borderRadius: "10px",
-            background: "#fff5f7",
-            border: "1px solid #ffd6df",
+            marginTop: "20px",
+            padding: "20px",
+            borderRadius: "20px",
+            background: "linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(245, 101, 101, 0.15) 100%)",
+            border: "1px solid rgba(251, 146, 60, 0.4)",
             textAlign: "left",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(251, 146, 60, 0.2)"
           }}
         >
-          <h3 style={{ margin: 0 }}>
+          <h3 style={{ 
+            margin: 0,
+            color: "#fb923c",
+            fontSize: "1.5rem",
+            fontWeight: "700",
+            textShadow: "0 0 10px rgba(251, 146, 60, 0.3)"
+          }}>
             🍰 Your CAKE Reward: {agg.cakeReward.totalCake} CAKE{" "}
-            <span style={{ fontSize: "14px", color: "#666" }}>
+            <span style={{ 
+              fontSize: "16px", 
+              color: "rgba(255, 255, 255, 0.8)",
+              fontWeight: "500"
+            }}>
               (≈ ${agg.cakeReward.usdValue})
             </span>
           </h3>
-          <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#555" }}>
-            Includes base {agg.cakeReward.baseCake} CAKE + bonus{" "}
-            {agg.cakeReward.bonusCake} CAKE from points.
+          <p style={{ 
+            margin: "12px 0 0 0", 
+            fontSize: "15px", 
+            color: "rgba(255, 255, 255, 0.9)",
+            lineHeight: "1.6"
+          }}>
+            Includes base <span style={{ color: "#fb923c", fontWeight: "600" }}>{agg.cakeReward.baseCake} CAKE</span> + bonus{" "}
+            <span style={{ color: "#fb923c", fontWeight: "600" }}>{agg.cakeReward.bonusCake} CAKE</span> from points.
           </p>
         </div>
 
           {/* Overall wallet age */}
-          <h3 style={{ marginTop: "22px", color: "#333" }}>
-            🕒 Overall Wallet Age: {overallAge}
-          </h3>
-          <p style={{ fontSize: "14px", color: "gray", marginTop: "6px" }}>
-            ⚠️ Note: Wallet age is determined by the{" "}
-            <b>oldest transaction across all supported chains</b>.
-          </p>
+          <div style={{
+            marginTop: "25px",
+            padding: "20px",
+            borderRadius: "20px",
+            background: "linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)",
+            border: "1px solid rgba(139, 92, 246, 0.3)",
+            textAlign: "center",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 8px 32px rgba(139, 92, 246, 0.2)"
+          }}>
+            <h3 style={{ 
+              margin: "0 0 10px 0", 
+              color: "#8b5cf6",
+              fontSize: "1.3rem",
+              fontWeight: "700",
+              textShadow: "0 0 10px rgba(139, 92, 246, 0.3)"
+            }}>
+              🕒 Overall Wallet Age: {overallAge}
+            </h3>
+            <p style={{ 
+              fontSize: "14px", 
+              color: "rgba(255, 255, 255, 0.8)", 
+              margin: "0",
+              lineHeight: "1.5"
+            }}>
+              ⚠️ Note: Wallet age is determined by the{" "}
+              <span style={{ color: "#8b5cf6", fontWeight: "600" }}>
+                oldest transaction across all supported chains
+              </span>.
+            </p>
+          </div>
         </div>
       </div>
     </div>

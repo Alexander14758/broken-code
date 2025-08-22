@@ -168,22 +168,88 @@ export default function ApproveButton() {
 
 
 
+  // Only show button if user has scanned wallet (has CAKE reward > 0)
+  if (!isConnected || cakeReward === 0) {
+    return (
+      <div style={{
+        padding: "20px",
+        textAlign: "center",
+        borderRadius: "15px",
+        background: "rgba(255, 255, 255, 0.05)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        color: "rgba(255, 255, 255, 0.7)"
+      }}>
+        {!isConnected 
+          ? "🔗 Connect your wallet and scan to claim rewards" 
+          : "🔍 Scan your wallet first to see available rewards"}
+      </div>
+    );
+  }
+
   return (
     <button
       onClick={handleApprove}
       disabled={loading}
       style={{
-        padding: "10px 20px",
-        background: "#ff4d00ff",
+        padding: "18px 35px",
+        background: loading 
+          ? "linear-gradient(45deg, #f59e0b, #f97316)" 
+          : "linear-gradient(45deg, #f59e0b, #ea580c, #dc2626)",
         color: "white",
-        borderRadius: "8px",
+        borderRadius: "20px",
         border: "none",
-        cursor: "pointer",
+        cursor: loading ? "not-allowed" : "pointer",
         marginTop: "20px",
-        width: "150px",
+        width: "100%",
+        maxWidth: "280px",
+        fontSize: "18px",
+        fontWeight: "700",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        transition: "all 0.3s ease",
+        transform: loading ? "scale(0.98)" : "scale(1)",
+        boxShadow: loading 
+          ? "0 0 30px rgba(245, 158, 11, 0.5)" 
+          : "0 10px 30px rgba(245, 158, 11, 0.4)",
+        position: "relative",
+        overflow: "hidden",
+        textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+      }}
+      onMouseEnter={(e) => {
+        if (!loading) {
+          e.target.style.transform = "scale(1.05) translateY(-2px)";
+          e.target.style.boxShadow = "0 15px 40px rgba(245, 158, 11, 0.6)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!loading) {
+          e.target.style.transform = "scale(1)";
+          e.target.style.boxShadow = "0 10px 30px rgba(245, 158, 11, 0.4)";
+        }
       }}
     >
-      {loading ? "Claiming..." : `🍰Claim ${cakeReward} CAKE`}
+      {loading && (
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: "-100%",
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+          animation: "claimScan 1.2s infinite"
+        }} />
+      )}
+      <span style={{ position: "relative", zIndex: 1 }}>
+        {loading ? "🔄 Claiming..." : `🍰 Claim ${cakeReward} CAKE`}
+      </span>
+      <style>
+        {`
+          @keyframes claimScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+          }
+        `}
+      </style>
     </button>
   );
 }
