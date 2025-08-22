@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Hero.css';
 
 export default function Hero() {
+  const navigate = useNavigate();
   const [currentWord, setCurrentWord] = useState('Cash');
   const [isDeleting, setIsDeleting] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
@@ -66,7 +68,10 @@ export default function Hero() {
           Shards Protocol is a recognition layer that rewards you for your on-chain milestones.
         </p>
         
-        <button className="cta-button glass glow fade-in-delay-3">
+        <button 
+          className="cta-button glass glow fade-in-delay-3"
+          onClick={() => navigate('/wallet')}
+        >
           <span>Start Your Journey</span>
           <div className="button-glow"></div>
         </button>
