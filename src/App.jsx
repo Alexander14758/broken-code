@@ -1,16 +1,16 @@
-// App.jsx
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import Mainpage from "./pages/Mainpage";
+
+import React from 'react';
+import Hero from './components/Hero';
+import FeatureCards from './components/FeatureCards';
+import Footer from './components/Footer';
+import './App.css';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index element={<Home />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/mainpage" element={<Mainpage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="app">
+      <Hero />
+      <FeatureCards />
+      <Footer />
+    </div>
   );
 }
