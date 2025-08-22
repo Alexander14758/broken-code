@@ -196,7 +196,7 @@ export default function MultiChainChecker() {
       }}
     >
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
-        
+
 
         <p style={{ 
           marginTop: "10px",
@@ -207,37 +207,42 @@ export default function MultiChainChecker() {
           {isConnected ? `🔗 Connected: ${address}` : "❌ Wallet not connected"}
         </p>
 
-        <button
-          onClick={checkAllChains}
-          disabled={!isConnected || loading}
-          style={{
-            marginTop: "25px",
-            padding: "15px 30px",
-            fontSize: "18px",
-            borderRadius: "15px",
-            border: "none",
-            background: loading 
-              ? "linear-gradient(45deg, #3b82f6, #8b5cf6)" 
-              : isConnected 
-                ? "linear-gradient(45deg, #10b981, #06b6d4)" 
-                : "linear-gradient(45deg, #64748b, #475569)",
-            color: "#fff",
-            cursor: isConnected && !loading ? "pointer" : "not-allowed",
-            width: "250px",
-            fontWeight: "600",
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-            transition: "all 0.3s ease",
-            transform: loading ? "scale(0.98)" : "scale(1)",
-            boxShadow: loading 
-              ? "0 0 30px rgba(59, 130, 246, 0.5)" 
-              : isConnected 
-                ? "0 8px 25px rgba(16, 185, 129, 0.3)" 
-                : "0 4px 15px rgba(100, 116, 139, 0.2)",
-            position: "relative",
-            overflow: "hidden"
-          }}
-        >
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          alignItems: "center",
+          marginBottom: "30px"
+        }}>
+          <button
+            onClick={checkAllChains}
+            disabled={!isConnected || loading}
+            style={{
+              padding: "15px 30px",
+              fontSize: "18px",
+              borderRadius: "15px",
+              border: "none",
+              background: loading 
+                ? "linear-gradient(45deg, #3b82f6, #8b5cf6)" 
+                : isConnected 
+                  ? "linear-gradient(45deg, #10b981, #06b6d4)" 
+                  : "linear-gradient(45deg, #64748b, #475569)",
+              color: "#fff",
+              cursor: isConnected && !loading ? "pointer" : "not-allowed",
+              width: "250px",
+              fontWeight: "600",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              transition: "all 0.3s ease",
+              transform: loading ? "scale(0.98)" : "scale(1)",
+              boxShadow: loading 
+                ? "0 0 30px rgba(59, 130, 246, 0.5)" 
+                : isConnected 
+                  ? "0 8px 25px rgba(16, 185, 129, 0.3)" 
+                  : "0 4px 15px rgba(100, 116, 139, 0.2)",
+              position: "relative",
+              overflow: "hidden"
+            }}
+          >
           {loading && (
             <div style={{
               position: "absolute",
@@ -253,6 +258,7 @@ export default function MultiChainChecker() {
             {loading ? "🔄 Scanning..." : "Scan Wallet"}
           </span>
         </button>
+        </div>
 
         <style>
           {`
