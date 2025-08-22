@@ -198,14 +198,7 @@ export default function MultiChainChecker() {
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
 
 
-        <p style={{ 
-          marginTop: "10px",
-          color: isConnected ? "#10b981" : "#ef4444",
-          fontSize: "1.1rem",
-          fontWeight: "500"
-        }}>
-          {isConnected ? `🔗 Connected: ${address}` : "❌ Wallet not connected"}
-        </p>
+        
 
         <div style={{ 
           display: "flex", 

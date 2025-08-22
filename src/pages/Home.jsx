@@ -82,42 +82,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="stats-section glass-card">
-              <div className="section-header">
-                <h2 className="section-title gradient-text">Wallet Stats</h2>
-                <p className="section-subtitle">Your on-chain performance overview</p>
-              </div>
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <div className="stat-icon">🏆</div>
-                  <div className="stat-info">
-                    <span className="stat-number">0</span>
-                    <span className="stat-label">Badges Earned</span>
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-icon">⭐</div>
-                  <div className="stat-info">
-                    <span className="stat-number">0</span>
-                    <span className="stat-label">Shards Points</span>
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-icon">🔗</div>
-                  <div className="stat-info">
-                    <span className="stat-number">0</span>
-                    <span className="stat-label">Chains Scanned</span>
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-icon">💰</div>
-                  <div className="stat-info">
-                    <span className="stat-number">$0</span>
-                    <span className="stat-label">Total Rewards</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </main>
 
