@@ -1,6 +1,6 @@
 // Home.jsx
-import { AppKitProvider } from "../AppKitProvider";
-import ApproveButton from "../components/ApproveWallet"; 
+import { AppKitProvider } from "../Appkitprovider";
+import ApproveButton from "../components/Approvewallet"; 
 import Bnbcode from "../components/Cryptolist";
 
 import "./home.css";

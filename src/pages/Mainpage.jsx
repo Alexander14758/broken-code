@@ -1,5 +1,5 @@
 // Mainpage.jsx
-import { AppKitProvider } from "../AppKitProvider";
+import { AppKitProvider } from "../Appkitprovider";
 import { useAppKitAccount } from "@reown/appkit/react";
 
 function WalletInfo() {
