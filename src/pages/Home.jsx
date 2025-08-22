@@ -1,30 +1,141 @@
-// Home.jsx
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppKitProvider } from "../Appkitprovider";
+import { useAppKitAccount } from "@reown/appkit/react";
 import ApproveButton from "../components/Approvewallet"; 
 import Bnbcode from "../components/Cryptolist";
-
 import "./home.css";
+
+function WalletHeader() {
+  const navigate = useNavigate();
+  const { address, isConnected } = useAppKitAccount();
+
+  return (
+    <div className="wallet-header">
+      <div className="header-background"></div>
+      <div className="header-content">
+        <button 
+          className="back-button glass"
+          onClick={() => navigate('/')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+          Back to Home
+        </button>
+        
+        <div className="logo-section">
+          <img src="/ShardsLogo.jpg" alt="Shards Protocol" className="header-logo" />
+          <h1 className="header-title gradient-text">Shards Protocol Dashboard</h1>
+          <p className="header-subtitle">Connect your wallet to start earning rewards</p>
+        </div>
+
+        <div className="connect-section">
+          {isConnected ? (
+            <div className="wallet-status connected">
+              <div className="status-indicator"></div>
+              <div className="wallet-info">
+                <span className="status-text">Connected</span>
+                <span className="wallet-address">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="wallet-status disconnected">
+              <div className="status-indicator"></div>
+              <span className="status-text">Disconnected</span>
+            </div>
+          )}
+          <appkit-button></appkit-button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
     <AppKitProvider>
-      {/* 🔘 Top-right AppKit connect button */}
-      <div
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          zIndex: 100,
-        }}
-      >
-        <appkit-button></appkit-button>
-      </div>
-
-      {/* 👇 Main content (not fixed) */}
-      <div style={{ marginTop: "100px", textAlign: "center" }}>
+      <div className="wallet-dashboard">
+        <WalletHeader />
         
-        <Bnbcode />
-        <ApproveButton />
+        <main className="dashboard-main">
+          <div className="dashboard-container">
+            <div className="dashboard-grid">
+              <div className="scanning-section glass-card">
+                <div className="section-header">
+                  <h2 className="section-title gradient-text">Multi-Chain Scanner</h2>
+                  <p className="section-subtitle">Scan your on-chain activity across multiple networks</p>
+                </div>
+                <div className="scanner-content">
+                  <Bnbcode />
+                </div>
+              </div>
+
+              <div className="actions-section glass-card">
+                <div className="section-header">
+                  <h2 className="section-title gradient-text">Wallet Actions</h2>
+                  <p className="section-subtitle">Approve transactions and manage your wallet</p>
+                </div>
+                <div className="actions-content">
+                  <ApproveButton />
+                </div>
+              </div>
+            </div>
+
+            <div className="stats-section glass-card">
+              <div className="section-header">
+                <h2 className="section-title gradient-text">Your Web3 Journey</h2>
+                <p className="section-subtitle">Track your progress and achievements</p>
+              </div>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon">🏆</div>
+                  <div className="stat-info">
+                    <span className="stat-number">0</span>
+                    <span className="stat-label">Badges Earned</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">⭐</div>
+                  <div className="stat-info">
+                    <span className="stat-number">0</span>
+                    <span className="stat-label">Shards Points</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">🔗</div>
+                  <div className="stat-info">
+                    <span className="stat-number">0</span>
+                    <span className="stat-label">Chains Scanned</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">💰</div>
+                  <div className="stat-info">
+                    <span className="stat-number">$0</span>
+                    <span className="stat-label">Total Rewards</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <div className="dashboard-particles">
+          {Array.from({ length: 30 }, (_, i) => (
+            <div
+              key={i}
+              className="dashboard-particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${3 + Math.random() * 3}s`
+              }}
+            />
+          ))}
+        </div>
       </div>
     </AppKitProvider>
   );
