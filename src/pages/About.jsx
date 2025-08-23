@@ -1,8 +1,41 @@
 
 import React from 'react';
 import './About.css';
+import MichaelCarter from '../images/Michael_Carter.jpg';
+import DavidMitchell from '../images/David_Mitchell.jpg';
+import ArjunSharma from '../images/Arjun_Sharma.jpg';
+import JamesAnderson from '../images/James_Anderson.jpg';
 
 export default function About() {
+  const scrollToTeam = () => {
+    document.getElementById('team-section').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  };
+
+  const teamMembers = [
+    {
+      name: 'Michael Carter',
+      role: 'CEO, Co-Founder',
+      image: MichaelCarter
+    },
+    {
+      name: 'David Mitchell',
+      role: 'CPO, Co-Founder',
+      image: DavidMitchell
+    },
+    {
+      name: 'Arjun Sharma',
+      role: 'CTO, Co-Founder',
+      image: ArjunSharma
+    },
+    {
+      name: 'James Anderson',
+      role: 'Co-Founder',
+      image: JamesAnderson
+    }
+  ];
+
   return (
     <div className="about-page">
       <div className="about-container">
@@ -17,7 +50,18 @@ export default function About() {
           <div className="about-section glass">
             <h2 className="section-title gradient-text">Our Mission</h2>
             <p className="section-text">
-              Shards Protocol transforms your on-chain activity into meaningful recognition and rewards. 
+              Shards Protocol is built by Shards with the goal of creating a unifying rewards distribution and user recognition protocol in Web3.
+            </p>
+            <div className="learn-team-container">
+              <button className="learn-team-button" onClick={scrollToTeam}>
+                LEARN ABOUT THE TEAM
+              </button>
+            </div>
+          </div>
+
+          <div className="about-section glass">
+            <h2 className="section-title gradient-text">Our Vision</h2>
+            <p className="section-text">
               We believe that every transaction, every interaction, and every milestone in Web3 should 
               contribute to building your digital reputation and unlocking new opportunities.
             </p>
@@ -68,6 +112,32 @@ export default function About() {
               <div className="benefit-card">
                 <h4>Community Driven</h4>
                 <p>Governed by the community, for the community</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="team-section" className="team-section glass">
+            <h2 className="section-title gradient-text">Introducing the Team</h2>
+            <p className="team-subtitle">Meet the exceptional people that make the magic happen.</p>
+            
+            <div className="team-slider">
+              <div className="team-members">
+                {teamMembers.map((member, index) => (
+                  <div key={index} className="team-card">
+                    <div className="team-image-container">
+                      <img 
+                        src={member.image} 
+                        alt={member.name}
+                        className="team-image"
+                      />
+                      <div className="team-overlay"></div>
+                    </div>
+                    <div className="team-info">
+                      <h3 className="team-name">{member.name}</h3>
+                      <p className="team-role">{member.role}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
