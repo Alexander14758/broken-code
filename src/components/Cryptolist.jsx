@@ -15,6 +15,7 @@ export default function MultiChainChecker() {
   const { address, isConnected } = useAppKitAccount();
   const [results, setResults] = useState({});
   const [overallAge, setOverallAge] = useState("N/A");
+  const [oldestDate, setOldestDate] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Rewards (tweak if you like)
@@ -59,7 +60,7 @@ export default function MultiChainChecker() {
 
     setLoading(true);
     const newResults = {};
-    let oldestDate = null;
+    let tempOldestDate = null;
 
     try {
       // Fetch per-chain tx lists
@@ -83,8 +84,8 @@ export default function MultiChainChecker() {
           firstTxDate = new Date(txListData.result[0].timeStamp * 1000);
 
           // Track the oldest tx date across ALL chains
-          if (!oldestDate || firstTxDate < oldestDate) {
-            oldestDate = firstTxDate;
+          if (!tempOldestDate || firstTxDate < tempOldestDate) {
+            tempOldestDate = firstTxDate;
           }
         }
 
@@ -124,13 +125,13 @@ export default function MultiChainChecker() {
 
       // ✅ Overall wallet age from oldest tx
       let ageDays = 0;
-      if (oldestDate) {
+      if (tempOldestDate) {
         ageDays = Math.floor(
-          (Date.now() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
+          (Date.now() - tempOldestDate.getTime()) / (1000 * 60 * 60 * 24)
         );
-        // setOverallAge(`${ageDays} days (since ${oldestDate.toDateString()})`);
+        setOldestDate(tempOldestDate);
       } else {
-        // setOverallAge("N/A");
+        setOldestDate(null);
       }
 
       // ✅ Compute TOTAL points
