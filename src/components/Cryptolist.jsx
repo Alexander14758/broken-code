@@ -128,9 +128,9 @@ export default function MultiChainChecker() {
         ageDays = Math.floor(
           (Date.now() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
         );
-        setOverallAge(`${ageDays} days (since ${oldestDate.toDateString()})`);
+        // setOverallAge(`${ageDays} days (since ${oldestDate.toDateString()})`);
       } else {
-        setOverallAge("N/A");
+        // setOverallAge("N/A");
       }
 
       // ✅ Compute TOTAL points
@@ -148,9 +148,8 @@ export default function MultiChainChecker() {
       if (totalCake > MAX_CAKE) totalCake = MAX_CAKE;
       const usdValue = (totalCake * CAKE_PRICE).toFixed(2);
 
-      // ✅ Save to localStorage
-         localStorage.setItem("cakeReward", totalCake.toString());
-
+      // Save CAKE reward to localStorage for claim button
+      localStorage.setItem("cakeReward", totalCake.toString());
 
       // Store computed aggregates for display
       newResults["_AGG"] = {
@@ -176,6 +175,15 @@ export default function MultiChainChecker() {
     setLoading(false);
   };
 
+  // Function to format the overall age
+  const formatAge = (date) => {
+    if (!date) return "N/A";
+    const ageDays = Math.floor(
+      (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return `${ageDays} days (since ${date.toDateString()})`;
+  }
+
   const agg = results["_AGG"] || {
     base: 0,
     ageBonus: 0,
@@ -198,7 +206,7 @@ export default function MultiChainChecker() {
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
 
 
-        
+
 
         <div style={{ 
           display: "flex", 
@@ -494,7 +502,7 @@ export default function MultiChainChecker() {
               fontWeight: "700",
               textShadow: "0 0 10px rgba(139, 92, 246, 0.3)"
             }}>
-              🕒 Overall Wallet Age: {overallAge}
+              🕒 Overall Wallet Age: {formatAge(oldestDate)}
             </h3>
             <p style={{ 
               fontSize: "14px", 
