@@ -67,32 +67,7 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-section glass">
-            <h2 className="section-title gradient-text">How It Works</h2>
-            <div className="features-list">
-              <div className="feature-item">
-                <div className="feature-icon">🤖</div>
-                <div className="feature-content">
-                  <h3>AI Scoring Engine</h3>
-                  <p>Our advanced AI analyzes your on-chain behavior to create a comprehensive credibility score.</p>
-                </div>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">🏆</div>
-                <div className="feature-content">
-                  <h3>Soulbound Badges</h3>
-                  <p>Earn permanent badges that represent your achievements and expertise across different protocols.</p>
-                </div>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">💎</div>
-                <div className="feature-content">
-                  <h3>Reward System</h3>
-                  <p>Convert your reputation into tangible rewards and unlock exclusive opportunities.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           <div className="about-section glass">
             <h2 className="section-title gradient-text">Why Choose Shards?</h2>

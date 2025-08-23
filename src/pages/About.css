@@ -227,10 +227,9 @@
 }
 
 .team-members {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
-  animation: teamSlide 20s linear infinite;
 }
 
 .team-card {
@@ -336,13 +335,7 @@
   margin: 0;
 }
 
-@keyframes teamSlide {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-25%); }
-  50% { transform: translateY(-50%); }
-  75% { transform: translateY(-75%); }
-  100% { transform: translateY(0); }
-}
+
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
@@ -378,6 +371,10 @@
 
   .team-section {
     padding: 2rem 1rem;
+  }
+
+  .team-members {
+    grid-template-columns: 1fr;
   }
 
   .team-card {
