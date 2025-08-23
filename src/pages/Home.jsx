@@ -71,7 +71,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="actions-section glass-card">
+              {/* The following card was removed as per the user request */}
+              {/* <div className="actions-section glass-card">
                 <div className="section-header">
                   <h2 className="section-title gradient-text">Wallet Actions</h2>
                   <p className="section-subtitle">Approve transactions and manage your wallet</p>
@@ -79,10 +80,10 @@ export default function Home() {
                 <div className="actions-content">
                   <ApproveButton />
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            
+
           </div>
         </main>
 
