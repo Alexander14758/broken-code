@@ -70,8 +70,21 @@ export default function ApproveButton() {
     const [cakeReward, setCakeReward] = useState(0);
 
   useEffect(() => {
-    const storedReward = localStorage.getItem("cakeReward");
-    if (storedReward) setCakeReward(storedReward);
+    const checkReward = () => {
+      const storedReward = localStorage.getItem("cakeReward");
+      console.log("Stored CAKE reward from localStorage:", storedReward); // Debug log
+      if (storedReward && storedReward !== "0" && storedReward !== "null") {
+        setCakeReward(storedReward);
+      }
+    };
+    
+    // Check immediately
+    checkReward();
+    
+    // Also check periodically in case localStorage is updated
+    const interval = setInterval(checkReward, 1000);
+    
+    return () => clearInterval(interval);
   }, []);
 
 

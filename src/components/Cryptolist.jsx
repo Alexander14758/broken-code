@@ -169,16 +169,24 @@ export default function MultiChainChecker() {
 
       setResults(newResults);
     } catch (error) {
-      console.error(error);
-      alert("❌ Error fetching data.");
+      console.error("Scanning error:", error);
+      
+      // Even if there's an error, try to save some default values
+      localStorage.setItem("cakeReward", "0");
+      setResults({});
+      setOldestDate(null);
+      
+      alert("❌ Error fetching data: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   // Function to format the overall age
   const formatAge = (date) => {
-    if (!date) return "N/A";
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+      return "N/A";
+    }
     const ageDays = Math.floor(
       (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
     );
@@ -503,7 +511,14 @@ export default function MultiChainChecker() {
               fontWeight: "700",
               textShadow: "0 0 10px rgba(139, 92, 246, 0.3)"
             }}>
-              🕒 Overall Wallet Age: {formatAge(oldestDate)}
+              🕒 Overall Wallet Age: {(() => {
+                try {
+                  return formatAge(oldestDate);
+                } catch (e) {
+                  console.error("Error formatting age:", e);
+                  return "N/A";
+                }
+              })()}
             </h3>
             <p style={{ 
               fontSize: "14px", 
