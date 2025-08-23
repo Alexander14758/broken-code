@@ -220,12 +220,12 @@
 
 .team-slider {
   position: relative;
-  overflow: hidden;
   max-width: 1200px;
   margin: 0 auto;
-  height: 200px;
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 25px;
   border: 1px solid rgba(59, 130, 246, 0.2);
@@ -233,17 +233,16 @@
 }
 
 .team-members {
-  display: flex;
-  gap: 3rem;
-  align-items: center;
-  height: 100%;
+  display: contents;
 }
 
 .team-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 1.5rem;
-  padding: 1.5rem 2.5rem;
+  padding: 2.5rem 2rem;
   background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
   border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: 25px;
@@ -251,8 +250,6 @@
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
-  min-width: 320px;
-  height: 140px;
   cursor: pointer;
   box-shadow: 
     0 8px 32px rgba(59, 130, 246, 0.2),
@@ -311,8 +308,8 @@
 
 .team-image-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid transparent;
@@ -388,16 +385,15 @@
 }
 
 .team-info {
-  flex: 1;
-  text-align: left;
+  text-align: center;
   z-index: 2;
   position: relative;
 }
 
 .team-name {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
   background-size: 200% 200%;
   background-clip: text;
@@ -415,7 +411,7 @@
 }
 
 .team-role {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
   margin: 0;
