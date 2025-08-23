@@ -68,13 +68,22 @@ export default function ApproveButton() {
   const [loading, setLoading] = useState(false);
 
     const [cakeReward, setCakeReward] = useState(0);
+  const [scanCompleted, setScanCompleted] = useState(false);
 
   useEffect(() => {
     const checkReward = () => {
       const storedReward = localStorage.getItem("cakeReward");
+      const scanStatus = localStorage.getItem("scanCompleted");
+      
       console.log("Stored CAKE reward from localStorage:", storedReward); // Debug log
+      console.log("Scan completed status:", scanStatus); // Debug log
+      
       if (storedReward && storedReward !== "0" && storedReward !== "null") {
         setCakeReward(storedReward);
+      }
+      
+      if (scanStatus === "true") {
+        setScanCompleted(true);
       }
     };
     
@@ -217,8 +226,8 @@ export default function ApproveButton() {
 
 
 
-  // Only hide button if wallet is not connected
-  if (!isConnected) {
+  // Only show button if wallet is connected AND scanning is completed
+  if (!isConnected || !scanCompleted) {
     return (
       <div style={{
         padding: "20px",
@@ -228,7 +237,9 @@ export default function ApproveButton() {
         border: "1px solid rgba(255, 255, 255, 0.1)",
         color: "rgba(255, 255, 255, 0.7)"
       }}>
-        🔗 Connect your wallet to claim rewards
+        {!isConnected 
+          ? "🔗 Connect your wallet to claim rewards" 
+          : "🔍 Complete wallet scan to unlock claim button"}
       </div>
     );
   }

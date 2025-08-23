@@ -168,11 +168,15 @@ export default function MultiChainChecker() {
       };
 
       setResults(newResults);
+      
+      // Mark scan as completed
+      localStorage.setItem("scanCompleted", "true");
     } catch (error) {
       console.error("Scanning error:", error);
       
       // Even if there's an error, try to save some default values
       localStorage.setItem("cakeReward", "0");
+      localStorage.setItem("scanCompleted", "false");
       setResults({});
       setOldestDate(null);
       
