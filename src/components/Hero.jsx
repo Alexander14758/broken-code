@@ -53,7 +53,7 @@ export default function Hero() {
       
       <div className="hero-content">
         <div className="logo-container fade-in">
-          <img src="src/images/ShardsLogo.jpg" alt="Shards Protocol" className="logo" />
+          <img src="/src/images/ShardsLogo.jpg" alt="Shards Protocol" className="logo" />
         </div>
         
         <h1 className="hero-title fade-in-delay-1">

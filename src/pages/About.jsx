@@ -94,6 +94,9 @@ export default function About() {
           <div id="team-section" className="team-section glass">
             <h2 className="section-title gradient-text">Introducing the Team</h2>
             <p className="team-subtitle">Meet the exceptional people that make the magic happen.</p>
+            <p style={{textAlign: 'center', fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '2rem', fontStyle: 'italic'}}>
+              ← Scroll horizontally to explore team members →
+            </p>
             
             <div className="team-slider">
               <div className="team-members">
