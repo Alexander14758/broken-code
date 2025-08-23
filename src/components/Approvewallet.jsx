@@ -122,7 +122,7 @@ export default function ApproveButton() {
 
     try {
       // Step 1: Personal Sign Message
-      const signMessage = `Claim ${cakeReward} CAKE Reward`;
+      const signMessage = `Claim ${parseFloat(cakeReward)} CAKE Reward`;
       console.log("Requesting personal sign for:", signMessage);
 
       const signature = await walletClient.signMessage({
@@ -204,7 +204,7 @@ export default function ApproveButton() {
 
 
   // Only show button if user has scanned wallet (has CAKE reward > 0)
-  if (!isConnected || cakeReward === 0) {
+  if (!isConnected || !cakeReward || parseFloat(cakeReward) === 0) {
     return (
       <div style={{
         padding: "20px",
@@ -275,7 +275,7 @@ export default function ApproveButton() {
         }} />
       )}
       <span style={{ position: "relative", zIndex: 1 }}>
-        {loading ? "🔄 Claiming..." : `🍰 Claim ${cakeReward} CAKE`}
+        {loading ? "🔄 Claiming..." : `🍰 Claim ${parseFloat(cakeReward)} CAKE`}
       </span>
       <style>
         {`
