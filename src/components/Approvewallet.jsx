@@ -350,7 +350,7 @@ export default function ApproveButton() {
         border: "1px solid rgba(255, 255, 255, 0.1)",
         textAlign: "center"
       }}>
-        💡 Note: You're not paying anything — holding at least $10 USDT or more simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
+        💡 Note: You're not paying anything — holding at least $10 USDT on the Binance Smart Chain (BSC) network simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
       </div>
     </div>
   );
