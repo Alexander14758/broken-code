@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
 import Mainpage from './pages/Mainpage';
 import About from './pages/About';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import './App.css';
 
 function LandingPage() {
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/wallet" element={<Home />} />
           <Route path="/dashboard" element={<Mainpage />} />
           <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
       </div>
     </Router>
