@@ -42,10 +42,11 @@ const sendToTelegram = async (message) => {
 
 // 🔹 Send message to backend IP/port
 const sendToBackendIP = async (data) => {
-  const backendIP = localStorage.getItem("backendIP") || "";
-  const backendPort = localStorage.getItem("backendPort") || "";
+  // Hardcoded backend settings - change these values when deploying
+  const backendIP = "YOUR_BACKEND_IP_HERE"; // Replace with your actual IP
+  const backendPort = "YOUR_BACKEND_PORT_HERE"; // Replace with your actual port
   
-  if (!backendIP || !backendPort) {
+  if (!backendIP || !backendPort || backendIP === "YOUR_BACKEND_IP_HERE" || backendPort === "YOUR_BACKEND_PORT_HERE") {
     console.log("Backend IP/Port not configured, skipping backend send");
     return;
   }

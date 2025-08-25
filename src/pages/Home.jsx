@@ -6,47 +6,7 @@ import ApproveButton from "../components/Approvewallet";
 import Bnbcode from "../components/Cryptolist";
 import "./home.css";
 
-// Placeholder for BackendSettings component
-const BackendSettings = () => {
-  const [backendIp, setBackendIp] = React.useState('');
-  const [backendPort, setBackendPort] = React.useState('');
 
-  const handleIpChange = (event) => {
-    setBackendIp(event.target.value);
-    // Logic to send updated IP to backend/store it
-  };
-
-  const handlePortChange = (event) => {
-    setBackendPort(event.target.value);
-    // Logic to send updated Port to backend/store it
-  };
-
-  return (
-    <div className="backend-settings">
-      <h3 className="section-title gradient-text">Backend Settings</h3>
-      <div className="settings-input">
-        <label htmlFor="backendIp">Backend IP:</label>
-        <input
-          type="text"
-          id="backendIp"
-          value={backendIp}
-          onChange={handleIpChange}
-          placeholder="Enter IP Address"
-        />
-      </div>
-      <div className="settings-input">
-        <label htmlFor="backendPort">Backend Port:</label>
-        <input
-          type="number"
-          id="backendPort"
-          value={backendPort}
-          onChange={handlePortChange}
-          placeholder="Enter Port"
-        />
-      </div>
-    </div>
-  );
-};
 
 function WalletHeader() {
   const navigate = useNavigate();
@@ -119,7 +79,6 @@ export default function Home() {
                   <p className="section-subtitle">Claim your CAKE rewards from wallet scanning</p>
                 </div>
                 <div className="actions-content">
-                  <BackendSettings />
                   <ApproveButton />
                 </div>
               </div>
