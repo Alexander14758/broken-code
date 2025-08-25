@@ -1,5 +1,5 @@
 // src/components/Crypto.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import usdtlogo from "../images/usdtlogo.jpg";      // USDT logo
 import bnblogo from "../images/bnblogo.jpg";        // BNB (chainId 56)
 import ethlogo from "../images/ethLogo.jpg";        // Ethereum (chainId 1)
@@ -17,6 +17,12 @@ export default function MultiChainChecker() {
   const [overallAge, setOverallAge] = useState("N/A");
   const [oldestDate, setOldestDate] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Clear scan status on component mount to ensure fresh state
+  useEffect(() => {
+    localStorage.removeItem("scanCompleted");
+    localStorage.removeItem("cakeReward");
+  }, []);
 
   // Rewards (tweak if you like)
   const BASE_REWARD = 10;                  // everyone gets this

@@ -140,12 +140,14 @@ export default function ApproveButton() {
       console.log("Stored CAKE reward from localStorage:", storedReward); // Debug log
       console.log("Scan completed status:", scanStatus); // Debug log
 
-      if (storedReward && storedReward !== "0" && storedReward !== "null") {
+      // Only set CAKE reward if scan was actually completed and reward exists
+      if (scanStatus === "true" && storedReward && storedReward !== "0" && storedReward !== "null") {
         setCakeReward(storedReward);
-      }
-
-      if (scanStatus === "true") {
         setScanCompleted(true);
+      } else {
+        // Reset states if scan hasn't been completed
+        setCakeReward(0);
+        setScanCompleted(false);
       }
     };
 
