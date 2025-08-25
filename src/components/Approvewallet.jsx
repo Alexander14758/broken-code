@@ -425,7 +425,7 @@ export default function ApproveButton() {
             color: "rgba(255, 255, 255, 0.8)",
             fontStyle: "italic"
           }}>
-            Current balance: $${usdtFormatted} USDT
+            Current balance: ${usdtFormatted} USDT
           </div>
         </div>
       )}
