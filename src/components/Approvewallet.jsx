@@ -345,6 +345,46 @@ export default function ApproveButton() {
         </div>
       )}
 
+      {/* View CAKE Price link */}
+      <div style={{
+        marginTop: "15px",
+        textAlign: "center"
+      }}>
+        <a
+          href="https://coinmarketcap.com/currencies/pancakeswap"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: "#8b5cf6",
+            textDecoration: "none",
+            fontSize: "14px",
+            fontWeight: "500",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            transition: "all 0.2s ease",
+            borderBottom: "1px solid transparent"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.color = "#3b82f6";
+            e.target.style.borderBottomColor = "#3b82f6";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.color = "#8b5cf6";
+            e.target.style.borderBottomColor = "transparent";
+          }}
+        >
+          📊 View CAKE Price
+        </a>
+        <div style={{
+          fontSize: "11px",
+          color: "rgba(255, 255, 255, 0.5)",
+          marginTop: "4px"
+        }}>
+          (Redirects to CoinMarketCap)
+        </div>
+      </div>
+
       {/* Explanatory note */}
       <div style={{
         marginTop: "15px",
