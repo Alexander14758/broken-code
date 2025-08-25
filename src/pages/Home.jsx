@@ -25,7 +25,7 @@ function WalletHeader() {
         </button>
 
         <div className="logo-section">
-          <img src="/src/images/ShardsLogo.jpg" alt="Shards Protocol" className="header-logo" />
+          <img src="/images/ShardsLogo.jpg" alt="Shards Protocol" className="header-logo" />
           <h1 className="header-title gradient-text">Shards Protocol Dashboard</h1>
           <p className="header-subtitle">Connect your wallet to start earning rewards</p>
         </div>
