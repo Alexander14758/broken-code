@@ -28,7 +28,7 @@ export default function App() {
         <Sidebar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/wallet" element={<Home />} />
+          <Route path="/airdrop" element={<Home />} />
           <Route path="/dashboard" element={<Mainpage />} />
           <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

@@ -455,11 +455,11 @@ export default function MultiChainChecker() {
               color: "#06b6d4", 
               fontWeight: "600",
               fontSize: "16px"
-            }}>•••Breakdown•••</span> <br />
+            }}>••••Breakdown••••</span> <br />
             • Base Reward: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.base}</span> <br />
             • Wallet Age Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.ageBonus}</span> <br />
-            • Hold USDT Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.usdtPoints}</span> <br />
-            • Total Transactions Done Across All Chains: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.perChainPointsSum}</span>
+            • USDT Holding Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.usdtPoints}</span> <br />
+            • Total Transactions (All Chains): <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.perChainPointsSum}</span>
           </p>
         </div>
 
@@ -479,17 +479,16 @@ export default function MultiChainChecker() {
           <h3 style={{ 
             margin: 0,
             color: "#fb923c",
-            fontSize: "1.5rem",
+            fontSize: "1.3rem",
             fontWeight: "700",
             textShadow: "0 0 10px rgba(251, 146, 60, 0.3)"
           }}>
-            🍰 Your CAKE Reward: {agg.cakeReward.totalCake} CAKE{" "}
+            🍰Your CAKE Reward: {agg.cakeReward.totalCake} CAKE{" "}
             <span style={{ 
               fontSize: "16px", 
               color: "rgba(255, 255, 255, 0.8)",
               fontWeight: "500"
-            }}>
-              (≈ ${agg.cakeReward.usdValue})
+            }}> (≈${agg.cakeReward.usdValue})
             </span>
           </h3>
           <p style={{ 

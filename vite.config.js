@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      '9d863368-79fe-47ca-b4a3-db1001a090f2-00-3h0mpiin5i1pn.janeway.replit.dev'
+      '1561d8cc1151.ngrok-free.app'
     ]
   }
 })

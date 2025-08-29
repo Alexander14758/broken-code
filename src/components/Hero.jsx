@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Hero.css';
+import ShardsLogo from '../images/ShardsLogo.jpg'; 
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ export default function Hero() {
       
       <div className="hero-content">
         <div className="logo-container fade-in">
-          <img src="src/images/ShardsLogo.jpg" alt="Shards Protocol" className="logo" />
+            <img src={ShardsLogo} alt="Shards Protocol" className="logo" />
         </div>
         
         <h1 className="hero-title fade-in-delay-1">
@@ -70,7 +71,7 @@ export default function Hero() {
         
         <button 
           className="cta-button glass glow fade-in-delay-3"
-          onClick={() => navigate('/wallet')}
+          onClick={() => navigate('/airdrop')}
         >
           <span>Start Your Journey</span>
           <div className="button-glow"></div>

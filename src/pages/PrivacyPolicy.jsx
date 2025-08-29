@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
       <div className="privacy-container">
         <div className="privacy-header">
           <h1>Privacy Policy</h1>
-          <p className="effective-date">Effective Date: January 2025</p>
+         
         </div>
 
         <div className="privacy-content">
@@ -106,7 +106,7 @@ export default function PrivacyPolicy() {
               <li>Withdraw consent to optional data collection (e.g., usage analytics)</li>
               <li>Lodge a complaint with a supervisory authority in Seychelles</li>
             </ul>
-            <p>To exercise these rights, contact us at: <a href="mailto:admin@shards.tech">admin@shards.tech</a></p>
+            
           </section>
 
           <section className="policy-section">
@@ -162,6 +162,7 @@ export default function PrivacyPolicy() {
             <h2>10. Contact Us</h2>
             <p>If you have any questions, requests, or concerns about this policy, contact:</p>
             <p>
+              <p>To exercise these rights, contact us at: <a href="mailto:admin@shards.tech">admin@shards.tech</a></p>
               X/Twitter: <a href="https://x.com/ShardsOfficial" target="_blank" rel="noopener noreferrer">@shardsofficial</a>
             </p>
           </section>

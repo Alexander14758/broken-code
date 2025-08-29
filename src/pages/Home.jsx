@@ -44,7 +44,7 @@ function WalletHeader() {
           ) : (
             <div className="wallet-status disconnected">
               <div className="status-indicator"></div>
-              <span className="status-text">Disconnected</span>
+              <span className="status-text">Not Connected</span>
             </div>
           )}
           <appkit-button></appkit-button>
