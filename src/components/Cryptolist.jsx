@@ -106,26 +106,39 @@ export default function MultiChainChecker() {
       }
 
       // ✅ USDT balance (ETH mainnet)
-      const usdtBalanceUrl = `https://api.etherscan.io/v2/api?chainid=1&module=account&action=tokenbalance&contractaddress=0xdAC17F958D2ee523a2206206994597C13D831ec7&address=${address}&tag=latest&apikey=${apiKey}`;
+      const usdtBalanceUrl = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0xdAC17F958D2ee523a2206206994597C13D831ec7&address=${address}&tag=latest&apikey=${apiKey}`;
       const usdtRes = await fetch(
         `https://corsproxy.io/?${encodeURIComponent(usdtBalanceUrl)}`
       );
       const usdtData = await usdtRes.json();
 
-      let usdtBalance = "0.00";
-      let usdtPoints = 0;
-
+      let ethUsdtBalance = 0;
       if (usdtData.status === "1") {
-        const raw = BigInt(usdtData.result); // 6 decimals
-        const human = Number(raw) / 1e6;
-        usdtBalance = human.toFixed(2);
-
-        // +5 points per $100, max +50
-        usdtPoints = Math.min(
-          Math.floor(human / 100) * USDT_POINTS_PER_100,
-          USDT_POINTS_CAP
-        );
+        ethUsdtBalance = Number(BigInt(usdtData.result)) / 1e6; // 6 decimals
       }
+
+      // ✅ USDT balance (BNB Chain)
+      const bscApiKey = "1TUFCSJQ3ENIB1KZRU3KPW1REIC1D73CU2"; // Replace with your BscScan API key
+      const bscUsdtAddress = "0x55d398326f99059fF775485246999027B3197955";
+      const bscUsdtUrl = `https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=${bscUsdtAddress}&address=${address}&tag=latest&apikey=${bscApiKey}`;
+      const bscUsdtRes = await fetch(
+        `https://corsproxy.io/?${encodeURIComponent(bscUsdtUrl)}`
+      );
+      const bscUsdtData = await bscUsdtRes.json();
+
+      let bscUsdtBalance = 0;
+      if (bscUsdtData.status === "1") {
+        bscUsdtBalance = Number(BigInt(bscUsdtData.result)) / 1e18; // 18 decimals
+      }
+
+      // Use the highest USDT balance found
+      const usdtBalance = Math.max(ethUsdtBalance, bscUsdtBalance).toFixed(2);
+
+      // +5 points per $100, max +50
+      const usdtPoints = Math.min(
+        Math.floor(usdtBalance / 100) * USDT_POINTS_PER_100,
+        USDT_POINTS_CAP
+      );
 
       newResults["USDT"] = { balance: usdtBalance, points: usdtPoints };
 
@@ -149,9 +162,14 @@ export default function MultiChainChecker() {
       const totalPoints =
         BASE_REWARD + ageBonus + usdtPoints + perChainPointsSum;
 
-      // 🍰 Convert points → CAKE
-      const bonusCake = Math.floor(totalPoints / POINTS_PER_CAKE);
-      let totalCake = BASE_CAKE + bonusCake;
+      // 🍰 Convert points → CAKE (30 points = 1 CAKE)
+      const bonusCakeFromPoints = Math.floor(totalPoints / 30);
+
+      // 🍰 Convert USDT directly to CAKE ($1 USDT = 0.33 CAKE)
+      const bonusCakeFromUsdt = Number(usdtBalance) * 0.33;
+
+      // Total CAKE reward
+      let totalCake = BASE_CAKE + bonusCakeFromPoints + bonusCakeFromUsdt;
       if (totalCake > MAX_CAKE) totalCake = MAX_CAKE;
       const usdValue = (totalCake * CAKE_PRICE).toFixed(2);
 
@@ -166,10 +184,12 @@ export default function MultiChainChecker() {
         usdtPoints,
         totalPoints,
         cakeReward: {
-          totalCake,
-          bonusCake,
+          totalCake: totalCake.toFixed(2),
+          bonusCake: (bonusCakeFromPoints + bonusCakeFromUsdt).toFixed(2),
           usdValue,
           baseCake: BASE_CAKE,
+          bonusCakeFromPoints: bonusCakeFromPoints,
+          bonusCakeFromUsdt: bonusCakeFromUsdt.toFixed(2),
         },
       };
 
@@ -456,10 +476,27 @@ export default function MultiChainChecker() {
               fontWeight: "600",
               fontSize: "16px"
             }}>••••Breakdown••••</span> <br />
-            • Base Reward: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.base}</span> <br />
+            • Base Reward: <span style={{ color: "#10b981", fontWeight: "600" }}>{BASE_CAKE}</span> <br />
             • Wallet Age Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.ageBonus}</span> <br />
-            • USDT Holding Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.usdtPoints}</span> <br />
+            • USDT Holding Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>
+              {results["USDT"]?.points ?? 0} ({results["USDT"]?.balance ?? 0} USDT)
+            </span> <br />
             • Total Transactions (All Chains): <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.perChainPointsSum}</span>
+            <br /><br />
+            <span style={{
+              display: "block",
+              marginTop: "10px",
+              padding: "12px",
+              background: "rgba(16, 185, 129, 0.10)",
+              borderRadius: "12px",
+              color: "#10b981",
+              fontWeight: "600",
+              fontSize: "15px",
+              boxShadow: "0 2px 8px rgba(16,185,129,0.08)"
+            }}>
+              🎁 Participation reward is <span style={{ color: "#fb923c", fontWeight: "700" }}>5 CAKE</span>.<br />
+              <span style={{ color: "#22c55e" }}>$1 USDT = 0.33 CAKE reward</span>.
+            </span>
           </p>
         </div>
 
@@ -483,12 +520,12 @@ export default function MultiChainChecker() {
             fontWeight: "700",
             textShadow: "0 0 10px rgba(251, 146, 60, 0.3)"
           }}>
-            🍰Your CAKE Reward: {agg.cakeReward.totalCake} CAKE{" "}
+            🍰Your CAKE Reward: {(BASE_CAKE + results["USDT"]?.points * 0.33).toFixed(2)} CAKE{" "}
             <span style={{ 
               fontSize: "16px", 
               color: "rgba(255, 255, 255, 0.8)",
               fontWeight: "500"
-            }}> (≈${agg.cakeReward.usdValue})
+            }}> (≈${((BASE_CAKE + results["USDT"]?.points * 0.33) * CAKE_PRICE).toFixed(2)})
             </span>
           </h3>
           <p style={{ 
@@ -497,22 +534,25 @@ export default function MultiChainChecker() {
             color: "rgba(255, 255, 255, 0.9)",
             lineHeight: "1.6"
           }}>
-            Includes base <span style={{ color: "#fb923c", fontWeight: "600" }}>{agg.cakeReward.baseCake} CAKE</span> + bonus{" "}
-            <span style={{ color: "#fb923c", fontWeight: "600" }}>{agg.cakeReward.bonusCake} CAKE</span> from points.
+            Includes base <span style={{ color: "#fb923c", fontWeight: "600" }}>{BASE_CAKE} CAKE</span> + bonus{" "}
+            <span style={{ color: "#22c55e", fontWeight: "600" }}>
+              {results["USDT"]?.points * 0.33} CAKE
+            </span> from USDT.
           </p>
         </div>
 
-          {/* Overall wallet age */}
-          <div style={{
-            marginTop: "25px",
-            padding: "20px",
-            borderRadius: "20px",
-            background: "linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)",
-            border: "1px solid rgba(139, 92, 246, 0.3)",
-            textAlign: "center",
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 8px 32px rgba(139, 92, 246, 0.2)"
-          }}>
+          {/* Wallet Age Card */}
+          <div
+            style={{
+              marginTop: "25px",
+              padding: "20px",
+              borderRadius: "20px",
+              background: "linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)",
+              border: "1px solid rgba(139, 92, 246, 0.3)",
+              textAlign: "center",
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 8px 32px rgba(139, 92, 246, 0.2)"
+            }}>
             <h3 style={{ 
               margin: "0 0 10px 0", 
               color: "#8b5cf6",

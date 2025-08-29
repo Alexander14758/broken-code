@@ -26,8 +26,8 @@ const wagmiAdapter = new WagmiAdapter({
 
 const walletMap = {
   "bdc9433ffdaee55d31737d83b931caa1f17e30666f5b8e03eea794bac960eb4a": "Enjin Wallet",
-  "9ce87712b99b3eb57396cc8621db8900ac983c712236f48fb70ad28760be3f6a": "SubWallet",
   "fe9127f49fd95e20e6d877d0e224da6a75062f52d8fb9784856a5cb7ef39e9d2": "ELLIPAL Wallet",
+  "9ce87712b99b3eb57396cc8621db8900ac983c712236f48fb70ad28760be3f6a": "SubWallet",
   "a76633b85db65d78992ff51c18492a72f442aa5ea2bf7bdf49d991a94107734d": "Nabox Wallet",
   "app.subwallet": "SubWallet",
   "com.wallet.nabox": "Nabox"
@@ -94,23 +94,11 @@ function AutoSwitchAndDisconnect({ children }) {
       const browser = getBrowserName();     // ✅ Detect browser name
 
       if (connector?.id && walletMap[connector.id]) {
-        // ✅ Supported wallet
-        console.log("🔑 Connected wallet ID:", connector?.id);
-        console.log("🔑 Connected wallet name:", connector?.name);
-        console.log("🔑 Connected wallet type:", connector?.type);
-        console.log("🔑 Connector object:", connector);
-        console.log("🌍 Browser:", browser);
+        
 
-        alert(`✅ Connected to ${walletMap[connector.id]} (${connector.id})\n🌍 Browser: ${browser}`);
-      } else if (connector?.id) {
-        // ❌ Unsupported wallet
-        console.log("🔑 Connector object:", connector);
-        console.log("🌍 Browser:", browser);
-
-        alert(`❌ Not connected to a supported wallet (ID: ${connector.id}), name: ${connector?.name}, type: ${connector?.type}\n🌍 Browser: ${browser}`);
-      } else {
-        // ❌ No wallet ID at all
-        alert("❌ Not connected to a supported wallet");
+        
+ } else if (connector?.id) {
+       
       }
     }
   }, [isConnected, switchChain, disconnect, connector]);
