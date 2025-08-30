@@ -396,19 +396,68 @@ export default function MultiChainChecker() {
           {/* BLOCKCHAIN NETWORKS GRID */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "15px",
             maxWidth: "750px",
-            margin: "0 auto"
+            margin: "0 auto",
+            "@media (max-width: 640px)": {
+              gridTemplateColumns: "1fr",
+              gap: "12px",
+              padding: "0 10px"
+            }
           }}>
             {chains.map((chain) => {
+
+
+        <style>
+          {`
+            @media (max-width: 640px) {
+              .crypto-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                padding: 0 10px;
+              }
+              
+              .crypto-card {
+                padding: 15px !important;
+                min-height: auto !important;
+              }
+              
+              .summary-cards {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+                padding: 0 10px;
+              }
+              
+              .summary-card {
+                padding: 18px !important;
+              }
+            }
+            
+            @media (max-width: 480px) {
+              .crypto-grid {
+                padding: 0 5px;
+                gap: 10px !important;
+              }
+              
+              .crypto-card {
+                padding: 12px !important;
+              }
+              
+              .summary-card {
+                padding: 15px !important;
+              }
+            }
+          `}
+        </style>
+
               const r = results[chain.id];
               return (
                 <div
                   key={chain.id}
                   style={{
-                    padding: "20px",
-                    borderRadius: "18px",
+                    padding: window.innerWidth <= 640 ? "15px" : "20px",
+                    borderRadius: "16px",
                     background: "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)",
                     border: "1px solid rgba(255, 255, 255, 0.15)",
                     backdropFilter: "blur(15px)",
@@ -416,7 +465,8 @@ export default function MultiChainChecker() {
                     cursor: "pointer",
                     position: "relative",
                     overflow: "hidden",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)"
+                    boxShadow: "0 6px 24px rgba(0, 0, 0, 0.1)",
+                    minHeight: window.innerWidth <= 640 ? "auto" : "180px"
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-5px) scale(1.02)";
@@ -451,27 +501,27 @@ export default function MultiChainChecker() {
                       marginBottom: "15px"
                     }}>
                       <img src={chain.logo} alt={chain.name} style={{
-                        width: "50px",
-                        height: "50px",
+                        width: window.innerWidth <= 640 ? "40px" : "50px",
+                        height: window.innerWidth <= 640 ? "40px" : "50px",
                         borderRadius: "50%",
                         objectFit: "cover",
                         border: "2px solid rgba(59, 130, 246, 0.3)",
-                        boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)"
+                        boxShadow: "0 0 15px rgba(59, 130, 246, 0.3)"
                       }} />
                       <div>
                         <div style={{ 
                           fontWeight: 800, 
                           color: "#3b82f6",
-                          fontSize: "1.2rem",
-                          marginBottom: "4px",
+                          fontSize: window.innerWidth <= 640 ? "1rem" : "1.2rem",
+                          marginBottom: "2px",
                           textShadow: "0 0 10px rgba(59, 130, 246, 0.3)"
                         }}>{chain.name}</div>
                         <div style={{ 
                           color: "rgba(255, 255, 255, 0.7)", 
-                          fontSize: "12px",
+                          fontSize: window.innerWidth <= 640 ? "10px" : "12px",
                           fontWeight: "500",
                           textTransform: "uppercase",
-                          letterSpacing: "0.5px"
+                          letterSpacing: "0.3px"
                         }}>
                           Blockchain Network
                         </div>
@@ -480,40 +530,40 @@ export default function MultiChainChecker() {
                     
                     <div style={{ 
                       background: "rgba(255, 255, 255, 0.05)",
-                      padding: "15px",
-                      borderRadius: "12px",
+                      padding: window.innerWidth <= 640 ? "12px" : "15px",
+                      borderRadius: "10px",
                       border: "1px solid rgba(255, 255, 255, 0.1)"
                     }}>
                       <div style={{ 
                         color: "rgba(255, 255, 255, 0.9)", 
-                        fontSize: "14px",
-                        marginBottom: "8px",
+                        fontSize: window.innerWidth <= 640 ? "12px" : "14px",
+                        marginBottom: window.innerWidth <= 640 ? "6px" : "8px",
                         display: "flex",
                         alignItems: "center",
-                        gap: "8px"
+                        gap: "6px"
                       }}>
-                        <span style={{ fontSize: "16px" }}>📊</span>
+                        <span style={{ fontSize: window.innerWidth <= 640 ? "14px" : "16px" }}>📊</span>
                         Transactions: <span style={{ fontWeight: "700", color: "#06b6d4" }}>
                           {r?.txCount ?? 0}
                         </span>
                       </div>
                       <div style={{ 
                         color: "rgba(255, 255, 255, 0.8)", 
-                        fontSize: "13px",
-                        marginBottom: "10px"
+                        fontSize: window.innerWidth <= 640 ? "11px" : "13px",
+                        marginBottom: window.innerWidth <= 640 ? "8px" : "10px"
                       }}>
                         Counted: {r?.cappedTx ?? 0}/{PER_CHAIN_TX_CAP}
                       </div>
                       <div style={{ 
                         color: "#06b6d4", 
-                        fontSize: "15px", 
+                        fontSize: window.innerWidth <= 640 ? "13px" : "15px", 
                         fontWeight: "700",
                         display: "flex", 
                         alignItems: "center", 
-                        gap: "8px",
+                        gap: "6px",
                         background: "rgba(6, 182, 212, 0.15)",
-                        padding: "8px 12px",
-                        borderRadius: "8px"
+                        padding: window.innerWidth <= 640 ? "6px 10px" : "8px 12px",
+                        borderRadius: "6px"
                       }}>
                         {loading && !r ? (
                           <>
@@ -551,22 +601,23 @@ export default function MultiChainChecker() {
           </style>
            {/* SUMMARY CARDS SECTION */}
           <div style={{
-            marginTop: "30px",
+            marginTop: "25px",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-            gap: "20px",
+            gridTemplateColumns: window.innerWidth <= 640 ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: window.innerWidth <= 640 ? "15px" : "20px",
             maxWidth: "750px",
-            margin: "30px auto 0"
+            margin: "25px auto 0",
+            padding: window.innerWidth <= 640 ? "0 10px" : "0"
           }}>
             {/* TOTAL REWARD (Points) */}
             <div
               style={{
-                padding: "25px",
-                borderRadius: "20px",
+                padding: window.innerWidth <= 640 ? "18px" : "25px",
+                borderRadius: window.innerWidth <= 640 ? "16px" : "20px",
                 background: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)",
                 border: "1px solid rgba(16, 185, 129, 0.3)",
                 backdropFilter: "blur(15px)",
-                boxShadow: "0 12px 40px rgba(16, 185, 129, 0.2)",
+                boxShadow: window.innerWidth <= 640 ? "0 8px 30px rgba(16, 185, 129, 0.2)" : "0 12px 40px rgba(16, 185, 129, 0.2)",
                 transition: "all 0.3s ease"
               }}
               onMouseEnter={(e) => {
@@ -641,12 +692,12 @@ export default function MultiChainChecker() {
             {/* CAKE REWARD */}
             <div
               style={{
-                padding: "25px",
-                borderRadius: "20px",
+                padding: window.innerWidth <= 640 ? "18px" : "25px",
+                borderRadius: window.innerWidth <= 640 ? "16px" : "20px",
                 background: "linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(245, 101, 101, 0.15) 100%)",
                 border: "1px solid rgba(251, 146, 60, 0.4)",
                 backdropFilter: "blur(15px)",
-                boxShadow: "0 12px 40px rgba(251, 146, 60, 0.2)",
+                boxShadow: window.innerWidth <= 640 ? "0 8px 30px rgba(251, 146, 60, 0.2)" : "0 12px 40px rgba(251, 146, 60, 0.2)",
                 transition: "all 0.3s ease"
               }}
               onMouseEnter={(e) => {
@@ -714,16 +765,16 @@ export default function MultiChainChecker() {
           {/* Wallet Age Card */}
           <div
             style={{
-              marginTop: "25px",
-              padding: "25px",
-              borderRadius: "20px",
+              marginTop: window.innerWidth <= 640 ? "20px" : "25px",
+              padding: window.innerWidth <= 640 ? "18px" : "25px",
+              borderRadius: window.innerWidth <= 640 ? "16px" : "20px",
               background: "linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)",
               border: "1px solid rgba(139, 92, 246, 0.3)",
               textAlign: "center",
               backdropFilter: "blur(15px)",
-              boxShadow: "0 12px 40px rgba(139, 92, 246, 0.2)",
+              boxShadow: window.innerWidth <= 640 ? "0 8px 30px rgba(139, 92, 246, 0.2)" : "0 12px 40px rgba(139, 92, 246, 0.2)",
               maxWidth: "750px",
-              margin: "25px auto 0",
+              margin: window.innerWidth <= 640 ? "20px auto 0" : "25px auto 0",
               transition: "all 0.3s ease"
             }}
             onMouseEnter={(e) => {
