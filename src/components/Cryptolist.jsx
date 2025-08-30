@@ -535,9 +535,7 @@ export default function MultiChainChecker() {
             lineHeight: "1.6"
           }}>
             Includes base <span style={{ color: "#fb923c", fontWeight: "600" }}>{BASE_CAKE} CAKE</span> + bonus{" "}
-            <span style={{ color: "#22c55e", fontWeight: "600" }}>{agg?.cakeReward?.bonusCakeFromUsdt || "0"} CAKE from USDT</span>
-              {results["USDT"]?.points * 0.33} CAKE
-            </span> from USDT.
+            <span style={{ color: "#22c55e", fontWeight: "600" }}>{agg?.cakeReward?.bonusCakeFromUsdt || "0"} CAKE from USDT</span>.
           </p>
         </div>
 
