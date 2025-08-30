@@ -221,30 +221,20 @@ export default function ApproveButton() {
     console.log("Connector Type:", connectorType);
     console.log("Full connector object:", walletClient?.connector);
     
-    // Check if wallet is eligible by ID, name, or known variations
+    // Check if wallet is eligible - must match exact wallet ID or wallet name
     const isEligible = (
-      // Check eligibleWallets list
+      // Check eligibleWallets list by wallet ID
       (walletId && eligibleWallets[walletId]) ||
-      // Check for SubWallet variations
-      (walletId && (walletId.includes('subwallet') || walletId.includes('SubWallet'))) ||
-      (walletName && walletName.toLowerCase().includes('subwallet')) ||
-      // Check for Nabox variations
-      (walletId && (walletId.includes('nabox') || walletId.includes('Nabox'))) ||
-      (walletName && walletName.toLowerCase().includes('nabox')) ||
-      // Check for Trust Wallet variations (mobile specific)
-      (walletId && (walletId.includes('trust') || walletId.includes('Trust'))) ||
-      (walletName && walletName.toLowerCase().includes('trust')) ||
-      // Check for WalletConnect mobile connections (often used by mobile wallets)
-      (connectorType === 'walletConnect' && /Mobi|Android|iPhone/i.test(navigator.userAgent)) ||
-      // Check for injected wallet on mobile (Trust Wallet often appears as injected)
-      (connectorType === 'injected' && /Mobi|Android|iPhone/i.test(navigator.userAgent))
+      // Check eligibleWallets list by wallet name
+      (walletName && eligibleWallets[walletName])
     );
     
     console.log("Wallet eligibility check result:", isEligible);
+    console.log("Checking against eligible wallets:", eligibleWallets);
     
     if (!isEligible) {
       alert(
-        `🚫🔒 Only SubWallet, Nabox Wallet, and Trust Wallet (mobile) are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || connectorType || 'Unknown'}`
+        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || connectorType || 'Unknown'}`
       );
       return;
     }
