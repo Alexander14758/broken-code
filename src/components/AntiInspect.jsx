@@ -38,7 +38,7 @@ function AntiInspect() {
     };
   }, []);
 
-  return null; // This runs in background
+  return null; // This runs in background 17:32
 }
 
 export default AntiInspect;
