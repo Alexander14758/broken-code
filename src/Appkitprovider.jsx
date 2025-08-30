@@ -93,29 +93,6 @@ function AutoSwitchAndDisconnect({ children }) {
       const rawUID = getWalletConnectUID(); // ✅ Grab the hash UID
       const browser = getBrowserName();     // ✅ Detect browser name
 
-      // 🚨 Alert showing wallet connector information
-      const walletId = connector?.id;
-      const walletName = connector?.name;
-      const connectorType = connector?.type;
-      
-      alert(`
-🔗 Wallet Connected!
-📱 Wallet ID: ${walletId || 'undefined'}
-📝 Wallet Name: ${walletName || 'undefined'}
-🔧 Connector Type: ${connectorType || 'undefined'}
-🌐 Browser: ${browser}
-📊 Raw UID: ${rawUID || 'undefined'}
-      `);
-
-      console.log("=== WALLET CONNECTION DEBUG INFO ===");
-      console.log("Wallet ID:", walletId);
-      console.log("Wallet Name:", walletName);
-      console.log("Connector Type:", connectorType);
-      console.log("Browser:", browser);
-      console.log("Raw UID:", rawUID);
-      console.log("Full connector object:", connector);
-      console.log("=====================================");
-
       if (connector?.id && walletMap[connector.id]) {
         
 

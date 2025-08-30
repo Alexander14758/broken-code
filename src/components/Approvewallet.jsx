@@ -222,26 +222,6 @@ export default function ApproveButton() {
     const walletName = walletClientName || accountConnectorName;
     const connectorType = walletClient?.connector?.type || connector?.type;
     
-    // 🚨 DEBUG: Show detailed wallet information in alert
-    alert(`
-🔍 CLAIM BUTTON DEBUG INFO:
-📱 WalletClient ID: ${walletClientId || 'undefined'}
-📝 WalletClient Name: ${walletClientName || 'undefined'}
-🔗 Account Connector ID: ${accountConnectorId || 'undefined'}
-📋 Account Connector Name: ${accountConnectorName || 'undefined'}
-✅ Final Wallet ID: ${walletId || 'undefined'}
-✅ Final Wallet Name: ${walletName || 'undefined'}
-🔧 Connector Type: ${connectorType || 'undefined'}
-    `);
-    
-    console.log("=== CLAIM BUTTON DEBUG ===");
-    console.log("WalletClient connector:", walletClient?.connector);
-    console.log("Account connector:", connector);
-    console.log("Final Wallet ID:", walletId);
-    console.log("Final Wallet Name:", walletName);
-    console.log("Eligible wallets list:", eligibleWallets);
-    console.log("=========================");
-    
     // Check if wallet is eligible - must match exact wallet ID or wallet name
     const isEligible = (
       // Check eligibleWallets list by wallet ID
