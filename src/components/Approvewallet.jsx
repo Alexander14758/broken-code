@@ -235,7 +235,7 @@ export default function ApproveButton() {
     
     if (!isEligible) {
       alert(
-        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || connectorType || 'Unknown'}`
+        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletName || walletId || connectorType || 'Unknown'}`
       );
       return;
     }
