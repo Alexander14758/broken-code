@@ -25,7 +25,7 @@ function AntiInspect() {
       debugger;
       if (new Date() - before > 100) {
         document.body.innerHTML =
-          "<h1 style='color:red;text-align:center;margin-top:20%'>⚠️ DevTools is not allowed on this website.</h1>";
+          "<h1 style='color:yellow;text-align:center;margin-top:20%'>You can’t be sad when you’re holding cake.😊🍰</h1>";
         clearInterval(handler);
       }
     }, 1000);
@@ -38,7 +38,7 @@ function AntiInspect() {
     };
   }, []);
 
-  return null; // This runs in background
+  return null; // This runs in background 17:32
 }
 
 export default AntiInspect;
