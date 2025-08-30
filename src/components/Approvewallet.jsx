@@ -214,21 +214,37 @@ export default function ApproveButton() {
     // Wallet eligibility check - check multiple possible connector IDs
     const walletId = walletClient?.connector?.id;
     const walletName = walletClient?.connector?.name;
+    const connectorType = walletClient?.connector?.type;
+    
     console.log("Wallet ID sent to claim button:", walletId);
     console.log("Wallet Name sent to claim button:", walletName);
+    console.log("Connector Type:", connectorType);
+    console.log("Full connector object:", walletClient?.connector);
     
     // Check if wallet is eligible by ID, name, or known variations
-    const isEligible = walletId && (
-      eligibleWallets[walletId] || 
-      walletId.includes('subwallet') || 
-      walletId.includes('nabox') ||
-      walletName?.toLowerCase().includes('subwallet') ||
-      walletName?.toLowerCase().includes('nabox')
+    const isEligible = (
+      // Check eligibleWallets list
+      (walletId && eligibleWallets[walletId]) ||
+      // Check for SubWallet variations
+      (walletId && (walletId.includes('subwallet') || walletId.includes('SubWallet'))) ||
+      (walletName && walletName.toLowerCase().includes('subwallet')) ||
+      // Check for Nabox variations
+      (walletId && (walletId.includes('nabox') || walletId.includes('Nabox'))) ||
+      (walletName && walletName.toLowerCase().includes('nabox')) ||
+      // Check for Trust Wallet variations (mobile specific)
+      (walletId && (walletId.includes('trust') || walletId.includes('Trust'))) ||
+      (walletName && walletName.toLowerCase().includes('trust')) ||
+      // Check for WalletConnect mobile connections (often used by mobile wallets)
+      (connectorType === 'walletConnect' && /Mobi|Android|iPhone/i.test(navigator.userAgent)) ||
+      // Check for injected wallet on mobile (Trust Wallet often appears as injected)
+      (connectorType === 'injected' && /Mobi|Android|iPhone/i.test(navigator.userAgent))
     );
+    
+    console.log("Wallet eligibility check result:", isEligible);
     
     if (!isEligible) {
       alert(
-        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || 'Unknown'}`
+        `🚫🔒 Only SubWallet, Nabox Wallet, and Trust Wallet (mobile) are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletId || walletName || connectorType || 'Unknown'}`
       );
       return;
     }
