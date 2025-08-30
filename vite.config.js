@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'd517ccd3-e7ec-47e5-805d-f032ad51d0fe-00-1zys9ivzly5aa.picard.replit.dev'
+      '68050ffc-18b0-42cd-bd1c-7ec40efe541d-00-316fv9gm0b16p.janeway.replit.dev'
     ]
   }
 })
