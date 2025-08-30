@@ -239,7 +239,7 @@ export default function MultiChainChecker() {
         justifyContent: "center",
         alignItems: "flex-start",
         minHeight: "100vh",
-        padding: "40px",
+        padding: window.innerWidth <= 640 ? "20px 10px" : "40px",
       }}
     >
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
@@ -394,17 +394,13 @@ export default function MultiChainChecker() {
           )}
 
           {/* BLOCKCHAIN NETWORKS GRID */}
-          <div style={{
+          <div className="crypto-grid" style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "15px",
             maxWidth: "750px",
             margin: "0 auto",
-            "@media (max-width: 640px)": {
-              gridTemplateColumns: "1fr",
-              gap: "12px",
-              padding: "0 10px"
-            }
+            padding: window.innerWidth <= 640 ? "0 20px" : "0"
           }}>
             {chains.map((chain) => {
 
@@ -415,37 +411,61 @@ export default function MultiChainChecker() {
               .crypto-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
-                padding: 0 10px;
+                padding: 0 20px !important;
+                margin: 0 auto !important;
+                max-width: 100% !important;
               }
               
               .crypto-card {
                 padding: 15px !important;
                 min-height: auto !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 350px !important;
               }
               
               .summary-cards {
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
-                padding: 0 10px;
+                padding: 0 20px !important;
               }
               
               .summary-card {
                 padding: 18px !important;
+                margin: 0 auto !important;
+                max-width: 350px !important;
               }
             }
             
             @media (max-width: 480px) {
               .crypto-grid {
-                padding: 0 5px;
+                padding: 0 15px !important;
                 gap: 10px !important;
               }
               
               .crypto-card {
                 padding: 12px !important;
+                max-width: 320px !important;
               }
               
               .summary-card {
                 padding: 15px !important;
+                max-width: 320px !important;
+              }
+            }
+            
+            @media (max-width: 360px) {
+              .crypto-grid {
+                padding: 0 10px !important;
+              }
+              
+              .crypto-card {
+                max-width: 280px !important;
+                padding: 10px !important;
+              }
+              
+              .summary-card {
+                max-width: 280px !important;
               }
             }
           `}
@@ -455,6 +475,7 @@ export default function MultiChainChecker() {
               return (
                 <div
                   key={chain.id}
+                  className="crypto-card"
                   style={{
                     padding: window.innerWidth <= 640 ? "15px" : "20px",
                     borderRadius: "16px",
