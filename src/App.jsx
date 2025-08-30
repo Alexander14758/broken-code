@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar';
+import AntiInspect from './components/AntiInspect';
 import Home from './pages/Home';
 import Mainpage from './pages/Mainpage';
 import About from './pages/About';
@@ -25,6 +26,7 @@ export default function App() {
   return (
     <Router>
       <div className="app">
+        <AntiInspect />
         <Sidebar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
