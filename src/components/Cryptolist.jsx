@@ -239,7 +239,7 @@ export default function MultiChainChecker() {
         justifyContent: "center",
         alignItems: "flex-start",
         minHeight: "100vh",
-        padding: window.innerWidth <= 640 ? "20px 10px" : "40px",
+        padding: window.innerWidth <= 640 ? "20px 5px" : "40px",
       }}
     >
       <div style={{ textAlign: "center", maxWidth: "750px", width: "100%" }}>
@@ -400,7 +400,7 @@ export default function MultiChainChecker() {
             gap: "15px",
             maxWidth: "750px",
             margin: "0 auto",
-            padding: window.innerWidth <= 640 ? "0 20px" : "0"
+            padding: window.innerWidth <= 640 ? "0 5px" : "0"
           }}>
             {chains.map((chain) => {
 
@@ -411,61 +411,62 @@ export default function MultiChainChecker() {
               .crypto-grid {
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
-                padding: 0 20px !important;
-                margin: 0 auto !important;
+                padding: 0 5px !important;
+                margin: 0 !important;
                 max-width: 100% !important;
+                justify-items: start !important;
               }
               
               .crypto-card {
                 padding: 15px !important;
                 min-height: auto !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
                 width: 100% !important;
-                max-width: 350px !important;
+                max-width: 95% !important;
               }
               
               .summary-cards {
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
-                padding: 0 20px !important;
+                padding: 0 5px !important;
               }
               
               .summary-card {
                 padding: 18px !important;
-                margin: 0 auto !important;
-                max-width: 350px !important;
+                margin: 0 !important;
+                max-width: 95% !important;
               }
             }
             
             @media (max-width: 480px) {
               .crypto-grid {
-                padding: 0 15px !important;
+                padding: 0 2px !important;
                 gap: 10px !important;
               }
               
               .crypto-card {
                 padding: 12px !important;
-                max-width: 320px !important;
+                max-width: 98% !important;
               }
               
               .summary-card {
                 padding: 15px !important;
-                max-width: 320px !important;
+                max-width: 98% !important;
               }
             }
             
             @media (max-width: 360px) {
               .crypto-grid {
-                padding: 0 10px !important;
+                padding: 0 1px !important;
               }
               
               .crypto-card {
-                max-width: 280px !important;
+                max-width: 99% !important;
                 padding: 10px !important;
               }
               
               .summary-card {
-                max-width: 280px !important;
+                max-width: 99% !important;
               }
             }
           `}
@@ -628,7 +629,7 @@ export default function MultiChainChecker() {
             gap: window.innerWidth <= 640 ? "15px" : "20px",
             maxWidth: "750px",
             margin: "25px auto 0",
-            padding: window.innerWidth <= 640 ? "0 10px" : "0"
+            padding: window.innerWidth <= 640 ? "0 5px" : "0"
           }}>
             {/* TOTAL REWARD (Points) */}
             <div
