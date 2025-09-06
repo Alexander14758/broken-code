@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
@@ -9,6 +8,7 @@ import AntiInspect from './components/AntiInspect';
 import Home from './pages/Home';
 import Mainpage from './pages/Mainpage';
 import About from './pages/About';
+import Scanner from './pages/Scanner';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import './App.css';
 
@@ -33,6 +33,7 @@ export default function App() {
           <Route path="/airdrop" element={<Home />} />
           <Route path="/dashboard" element={<Mainpage />} />
           <Route path="/about" element={<About />} />
+          <Route path="/scanner" element={<Scanner />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
       </div>

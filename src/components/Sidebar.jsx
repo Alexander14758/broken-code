@@ -92,6 +92,7 @@ export default function Sidebar() {
               About
             </button>
           </li>
+          
           <li>
             <button 
               className={`nav-link ${isActive('/privacy') ? 'active' : ''}`}
